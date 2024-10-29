@@ -1,7 +1,7 @@
 const express = require('express');
-const sessionController = require('../controllers/sessionController');
+/*const sessionController = require('../controllers/sessionController');
 const catalogController = require('../controllers/catalogController');
-const adminRoutes = require('./adminRoutes');
+const adminRoutes = require('./adminRoutes');*/
 const gestionRoutes = require('./gestionRoutes');
 //const verifyToken = require('../middleware/authMiddleware');
 //const rateLimit = require('express-rate-limit');
@@ -9,11 +9,13 @@ const gestionRoutes = require('./gestionRoutes');
 function routes() {
   const router = express.Router();
 
-  router.get('/session', sessionController.current);
-  router.get('/catalog', catalogController.catalog);
+  //router.get('/session', sessionController.current);
 
-  router.use('/admin', adminRoutes);
-  router.use('/gestion', gestionRoutes);
+  //router.get('/catalog', catalogController.catalog);
+
+  //router.use('/admin', adminRoutes());
+  router.use('/gestion', gestionRoutes());
+
   return router;
 }
 

@@ -15,4 +15,4 @@ function adminRoutes() {
   return adminRouter;
 }
 
-module.exports = { adminRoutes };
+module.exports = adminRoutes;
