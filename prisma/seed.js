@@ -16,13 +16,13 @@ async function main() {
         pwd_salt: salt,
         pwd_hash: await hashPassword('admin', salt),
         role: Role.ADMIN,
-      },
+      }
     });
     await prisma.game.createMany({
       data: [
         { name: 'Monopoly', editor: 'Hasbro' },
         { name: 'Mario', editor: 'Nintendo' },
-      ],
+      ]
     });
     console.log('Multiple rows created successfully');
   } catch {
