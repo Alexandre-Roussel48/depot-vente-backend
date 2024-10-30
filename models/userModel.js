@@ -34,7 +34,7 @@ async function comparePasswords(user, data) {
 
 async function hashPassword(password, salt) {
   try {
-    return await bcrypt(password, salt);
+    return await bcrypt.hash(password + salt, 10);
   } catch (error) {
     throw new Error(`Error creating passwords: ${error.message}`);
   }

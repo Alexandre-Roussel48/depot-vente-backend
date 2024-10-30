@@ -9,12 +9,14 @@ async function main() {
   try {
     const salt = uuidv4();
     await prisma.user.create({
-      name: 'Fiorio',
-      surname: 'FiorioDu38',
-      email: 'fiorio@gmail.com',
-      pwd_salt: salt,
-      pwd_hash: hashPassword('fiorio', salt),
-      role: Role.ADMIN,
+      data: {
+        name: 'admin',
+        surname: 'admin',
+        email: 'admin@depot-vente.com',
+        pwd_salt: salt,
+        pwd_hash: await hashPassword('admin', salt),
+        role: Role.ADMIN,
+      },
     });
     await prisma.game.createMany({
       data: [
