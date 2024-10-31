@@ -2,6 +2,21 @@ const { PrismaClient, Status } = require('@prisma/client');
 
 const prisma = new PrismaClient();
 
+async function getRealGamesBySession(session_id) {
+  try {
+    const realgames = await prisma.realgame.findMany({
+      where: {
+        session_id: session_id,
+      },
+    });
+    return realgames;
+  } catch (error) {
+    throw new Error(
+      `Erreur serveur lors de la récupération du catalogue: ${error.message}`
+    );
+  }
+}
+
 async function getRealGame(data) {
   try {
     const realgame = await prisma.realgame.findMany({
@@ -25,6 +40,7 @@ async function createRealGame(data) {
   try {
     const realGames = [];
     //const currentSession = await getSession();
+    // /!\ la session courante doit etre passee depuis le controller ^
 
     for (const game of data.games) {
       // Créer plusieurs RealGames selon la quantité
@@ -48,6 +64,7 @@ async function createRealGame(data) {
 }
 
 module.exports = {
+  getRealGamesBySession,
   getRealGame,
   createRealGame,
 };

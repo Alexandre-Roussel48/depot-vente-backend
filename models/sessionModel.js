@@ -15,11 +15,50 @@ async function getSession(data) {
   }
 }
 
+async function getSessionByDate(date) {
+  try {
+    const session = await prisma.session.findFirst({
+      where: {
+        begin_date: { lte: date },
+        end_date: { gte: date },
+      },
+    });
+    return session;
+  } catch (error) {
+    throw new Error(
+      `Erreur serveur lors de la récupération de la session courante: ${error.message}`
+    );
+  }
+}
+
 async function createSession(data) {
   try {
+    if (
+      data.begin_date <
+      new Date().toISOString().split('T')[0] + 'T00:00.000Z'
+    ) {
+      throw new Error(
+        'La date de début de la session ne peut pas être inférieure à la date courante'
+      );
+    } else if (data.end_date < data.begin_date) {
+      throw new Error(
+        'La date de fin ne peut pas être inférieure à la date de début de la session'
+      );
+    }
+
+    const overlappingSession = await prisma.session.findFirst({
+      where: {
+        end_date: { gte: data.begin_date },
+      },
+    });
+
+    if (overlappingSession) {
+      throw new Error('Impossible de créer, une session est déjà en cours');
+    }
+
     await prisma.session.create({
       data: {
-        ...(data.begin_date && { begin_date: data.begin_date }), // Include only if begin_date exists
+        begin_date: data.begin_date,
         end_date: data.end_date,
         commission: data.commission,
         fees: data.fees,
@@ -67,4 +106,5 @@ module.exports = {
   createSession,
   updateSession,
   deleteSession,
+  getSessionByDate,
 };
