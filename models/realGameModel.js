@@ -2,6 +2,10 @@ const { PrismaClient, Status } = require('@prisma/client');
 
 const prisma = new PrismaClient();
 
+/*==========*/
+/* REALGAME */
+/*==========*/
+
 async function getRealGamesBySession(session_id) {
   try {
     const realgames = await prisma.realgame.findMany({

@@ -2,6 +2,10 @@ const { PrismaClient, Types } = require('@prisma/client');
 
 const prisma = new PrismaClient();
 
+/*=============*/
+/* TRANSACTION */
+/*=============*/
+
 async function createTransaction(data) {
   try {
     const totalValue = await getValue(data.games);

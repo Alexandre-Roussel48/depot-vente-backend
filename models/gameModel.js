@@ -2,10 +2,23 @@ const { PrismaClient } = require('@prisma/client');
 
 const prisma = new PrismaClient();
 
-async function getGame(data) {
+/*======*/
+/* GAME */
+/*======*/
+
+/* Returns existing games
+ * Params :
+ * - data : string (name or editor)
+ */
+async function getGames(data) {
   try {
     const games = await prisma.game.findMany({
-      where: data.id ? { id: +data.id } : {}, // If data.id exists, filter by id; otherwise, return all games
+      where: {
+        OR: [
+          { name: { startsWith: data.toLowerCase() } },
+          { editor: { startsWith: data.toLowerCase() } },
+        ],
+      },
     });
     return games;
   } catch (error) {
@@ -15,12 +28,18 @@ async function getGame(data) {
   }
 }
 
+/* Creates a new game
+ * Params :
+ * - data : dict with :
+ *   - name : string
+ *   - editor : string
+ */
 async function createGame(data) {
   try {
     await prisma.game.create({
       data: {
-        name: data.name,
-        editor: data.editor,
+        name: data.name.toLowerCase(),
+        editor: data.editor.toLowerCase(),
       },
     });
   } catch (error) {
@@ -30,13 +49,19 @@ async function createGame(data) {
   }
 }
 
+/* Updates an existing game
+ * Params :
+ * - data : dict with :
+ *   - name : string?
+ *   - editor : string?
+ */
 async function updateGame(data) {
   try {
     await prisma.game.update({
       where: { id: data.id },
       data: {
-        ...(data.name && { name: data.name }), // Include only if name exists
-        ...(data.editor && { editor: data.editor }), // Include only if editor exists
+        ...(data.name && { name: data.name.toLowerCase() }), // Include only if name exists
+        ...(data.editor && { editor: data.editor.toLowerCase() }), // Include only if editor exists
       },
     });
   } catch (error) {
@@ -46,6 +71,11 @@ async function updateGame(data) {
   }
 }
 
+/* Deletes an existing game
+ * Params :
+ * - data : dict with :
+ *   - id : number
+ */
 async function deleteGame(data) {
   try {
     await prisma.game.delete({
@@ -59,7 +89,7 @@ async function deleteGame(data) {
 }
 
 module.exports = {
-  getGame,
+  getGames,
   createGame,
   updateGame,
   deleteGame,

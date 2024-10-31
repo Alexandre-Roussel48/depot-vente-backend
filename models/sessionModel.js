@@ -2,11 +2,14 @@ const { PrismaClient } = require('@prisma/client');
 
 const prisma = new PrismaClient();
 
-async function getSession(data) {
+/*=========*/
+/* SESSION */
+/*=========*/
+
+/* Returns all sessions */
+async function getSessions() {
   try {
-    const sessions = await prisma.session.findMany({
-      where: data.id ? { id: +data.id } : {}, // If data.id exists, filter by id; otherwise, return all sessions
-    });
+    const sessions = await prisma.session.findMany({});
     return sessions;
   } catch (error) {
     throw new Error(
@@ -15,6 +18,10 @@ async function getSession(data) {
   }
 }
 
+/* Returns the session (if exists) where date falls
+ * Params :
+ * - date : string ISO FORMAT
+ */
 async function getSessionByDate(date) {
   try {
     const session = await prisma.session.findFirst({
@@ -31,6 +38,15 @@ async function getSessionByDate(date) {
   }
 }
 
+/* Creates a new session
+ * Pre-requisites : new session doesn't overlap existing ones
+ * Params :
+ * - data : dict with :
+ *   - begin_date : string ISO FORMAT
+ *   - end_date : string ISO FORMAT
+ *   - commission : number
+ *   - fees : number
+ */
 async function createSession(data) {
   try {
     if (
@@ -71,13 +87,18 @@ async function createSession(data) {
   }
 }
 
+/* Updates an existing session
+ * Pre-requisites : only updates commission & fees
+ * Params :
+ * - data : dict with :
+ *   - commission : number?
+ *   - fees : number?
+ */
 async function updateSession(data) {
   try {
     await prisma.session.update({
       where: { id: data.id },
       data: {
-        ...(data.begin_date && { begin_date: data.begin_date }), // Include only if begin_date exists
-        ...(data.end_date && { end_date: data.end_date }), // Include only if end_date exists
         ...(data.commission && { commission: data.commission }), // Include only if commission exists
         ...(data.fees && { fees: data.fees }), // Include only if fees exists
       },
@@ -89,6 +110,12 @@ async function updateSession(data) {
   }
 }
 
+/* Deletes an existing session
+ * Params :
+ * - data : dict with :
+ *   - id : number
+ * Remark : Doesn't delete associated data (realgames, transactions, etc...)
+ */
 async function deleteSession(data) {
   try {
     await prisma.session.delete({
@@ -102,9 +129,9 @@ async function deleteSession(data) {
 }
 
 module.exports = {
-  getSession,
+  getSessions,
+  getSessionByDate,
   createSession,
   updateSession,
   deleteSession,
-  getSessionByDate,
 };

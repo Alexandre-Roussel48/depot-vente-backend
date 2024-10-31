@@ -5,6 +5,10 @@ const jwt = require('jsonwebtoken');
 
 const prisma = new PrismaClient();
 
+/*======*/
+/* USER */
+/*======*/
+
 async function getUserByEmail(data) {
   try {
     const user = await prisma.user.findUnique({

@@ -2,10 +2,23 @@ const { PrismaClient } = require('@prisma/client');
 
 const prisma = new PrismaClient();
 
-async function getClient(data) {
+/*========*/
+/* CLIENT */
+/*========*/
+
+/* Returns existing clients
+ * Params :
+ * - data : string (email or phone_number)
+ */
+async function getClients(data) {
   try {
     const clients = await prisma.client.findMany({
-      where: data.id ? { id: data.id } : {}, // If data.id exists, filter by id; otherwise, return all clients
+      where: {
+        OR: [
+          { email: { startsWith: data.toLowerCase() } },
+          { phone_number: { startsWith: data.toLowerCase() } },
+        ],
+      },
     });
     return clients;
   } catch (error) {
@@ -15,15 +28,25 @@ async function getClient(data) {
   }
 }
 
+/* Creates a new client
+ * Pre-requisites : new client email and/or phone number doesn't already exists
+ * Params :
+ * - data : dict with :
+ *   - name : string
+ *   - surname : string
+ *   - email : string (unique)
+ *   - phone_number : string (unique)
+ *   - address : string?
+ */
 async function createClient(data) {
   try {
     await prisma.client.create({
       data: {
-        name: data.name,
-        surname: data.surname,
-        email: data.email,
+        name: data.name.toLowerCase(),
+        surname: data.surname.toLowerCase(),
+        email: data.email.toLowerCase(),
         phone_number: data.phone_number,
-        ...(data.address && { address: data.address }),
+        ...(data.address && { address: data.address.toLowerCase() }),
       },
     });
   } catch (error) {
@@ -33,16 +56,25 @@ async function createClient(data) {
   }
 }
 
+/* Updates an existing client
+ * Params :
+ * - data : dict with :
+ *   - name : string?
+ *   - surname : string?
+ *   - email : string? (unique)
+ *   - phone_number : string? (unique)
+ *   - address : string?
+ */
 async function updateClient(data) {
   try {
     await prisma.client.update({
       where: { id: data.id },
       data: {
-        ...(data.name && { name: data.name }), // Include only if name exists
-        ...(data.surname && { surname: data.surname }), // Include only if surname exists
-        ...(data.email && { email: data.email }), // Include only if email exists
+        ...(data.name && { name: data.name.toLowerCase() }), // Include only if name exists
+        ...(data.surname && { surname: data.surname.toLowerCase() }), // Include only if surname exists
+        ...(data.email && { email: data.email.toLowerCase() }), // Include only if email exists
         ...(data.phone_number && { phone_number: data.phone_number }), // Include only if phone_number exists
-        ...(data.address && { address: data.address }), // Include only if address exists
+        ...(data.address && { address: data.address.toLowerCase() }), // Include only if address exists
       },
     });
   } catch (error) {
@@ -52,6 +84,11 @@ async function updateClient(data) {
   }
 }
 
+/* Deletes existing client
+ * Params :
+ * - data : dict with :
+ *   - id : string
+ */
 async function deleteClient(data) {
   try {
     await prisma.client.delete({
@@ -65,7 +102,7 @@ async function deleteClient(data) {
 }
 
 module.exports = {
-  getClient,
+  getClients,
   createClient,
   updateClient,
   deleteClient,
