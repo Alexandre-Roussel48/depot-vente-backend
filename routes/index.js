@@ -9,12 +9,25 @@ const gestionRoutes = require('./gestionRoutes');
 function routes() {
   const router = express.Router();
 
-  router.get('/session', indexController.getCurrentSession);
-  router.get('/catalog', indexController.getCurrentCatalog);
+  router.get(
+    '/session',
+    indexController.getCurrentSession
+  ); /* GET /api/session -> Returns current session    */
+  router.get(
+    '/catalog',
+    indexController.getCurrentCatalog
+  ); /* GET /api/catalog -> Returns current realgames  */
 
   //router.use('/admin', verifyAdmin, adminRoutes()); /!\ to use on prod
-  router.use('/admin', adminRoutes());
-  router.use('/gestion', gestionRoutes());
+
+  router.use(
+    '/admin',
+    adminRoutes()
+  ); /* /api/admin/...   -> Admin features             */
+  router.use(
+    '/gestion',
+    gestionRoutes()
+  ); /* /api/gestion/... -> Gestion features           */
 
   return router;
 }

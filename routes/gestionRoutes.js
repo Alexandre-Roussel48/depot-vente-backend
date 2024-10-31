@@ -8,14 +8,26 @@ function gestionRoutes() {
   gestionRouter.get('/realgames', gestionController.realGames);
   gestionRouter.post('/deposit', gestionController.deposit);
 
-  gestionRouter.get('/session', gestionController.getSessions);
-  gestionRouter.get('/session/:id', gestionController.getSession);
-  gestionRouter.get('/client', gestionController.getClients);
-  gestionRouter.get('/client/:id', gestionController.getClient);
-  gestionRouter.post('/client', gestionController.createClient);
-  gestionRouter.put('/client', gestionController.updateClient);
-  gestionRouter.get('/games', gestionController.getGames);
-  gestionRouter.get('/games/:id', gestionController.getGame);
+  gestionRouter.get(
+    '/session',
+    gestionController.getSessions
+  ); /* GET  /api/gestion/session        -> Returns all sessions               */
+  gestionRouter.get(
+    '/client',
+    gestionController.getClients
+  ); /* GET  /api/gestion/client(?query) -> Returns all clients matching query */
+  gestionRouter.post(
+    '/client',
+    gestionController.createClient
+  ); /* POST /api/gestion/client         -> Creates a new client               */
+  gestionRouter.put(
+    '/client',
+    gestionController.updateClient
+  ); /* PUT  /api/gestion/client         -> Updates an existing client         */
+  gestionRouter.get(
+    '/game',
+    gestionController.getGames
+  ); /* GET  /api/gestion/game(?query)   -> Returns all games matching query   */
   /*
   gestionRouter.post('/sale', gestionController.registerSale);
   gestionRouter.get('/client', gestionController.clientId);
