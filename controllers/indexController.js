@@ -1,6 +1,11 @@
 const { getSessionByDate } = require('../models/sessionModel');
 const { getRealGamesBySession } = require('../models/realGameModel');
 
+/*=========*/
+/* SESSION */
+/*=========*/
+
+/* Returns the current session */
 exports.getCurrentSession = async (req, res) => {
   try {
     const session = await getSessionByDate(new Date().toISOString());
@@ -10,6 +15,11 @@ exports.getCurrentSession = async (req, res) => {
   }
 };
 
+/*==========*/
+/* REALGAME */
+/*==========*/
+
+/* Returns the current catalog */
 exports.getCurrentCatalog = async (req, res) => {
   try {
     const session = await getSessionByDate(new Date().toISOString());

@@ -5,13 +5,13 @@ const {
 } = require('../models/userModel');
 const { createRealGame, getRealGame } = require('../models/realGameModel');
 const { createTransaction } = require('../models/transactionModel');
-const { getSession } = require('../models/sessionModel');
+const { getSessions } = require('../models/sessionModel');
 const {
-  getClient,
+  getClients,
   createClient,
   updateClient,
 } = require('../models/clientModel');
-const { getGame } = require('../models/gameModel');
+const { getGames } = require('../models/gameModel');
 
 exports.login = async (req, res) => {
   try {
@@ -65,44 +65,47 @@ exports.deposit = async (req, res) => {
   }
 };
 
+/*=========*/
+/* SESSION */
+/*=========*/
+
+/* Returns all sessions */
 exports.getSessions = async (req, res) => {
   try {
-    const sessions = await getSession({});
+    const sessions = await getSessions();
     res.status(200).json({ sessions: sessions });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-exports.getSession = async (req, res) => {
-  try {
-    const data = req.params;
-    const sessions = await getSession(data);
-    res.status(200).json({ sessions: sessions });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
+/*========*/
+/* CLIENT */
+/*========*/
 
+/* Returns existing clients
+ * Params :
+ * - query : string (email or phone_number)
+ */
 exports.getClients = async (req, res) => {
   try {
-    const clients = await getClient({});
+    const { query } = req.query;
+    const clients = await getClients(query);
     res.status(200).json({ clients: clients });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-exports.getClient = async (req, res) => {
-  try {
-    const data = req.params;
-    const clients = await getClient(data);
-    res.status(200).json({ clients: clients });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
+/* Creates a new client
+ * Pre-requisites : new client email and/or phone number doesn't already exists
+ * Params :
+ * - name : string
+ * - surname : string
+ * - email : string (unique)
+ * - phone_number : string (unique)
+ * - address : string?
+ */
 exports.createClient = async (req, res) => {
   try {
     const data = req.body;
@@ -114,6 +117,14 @@ exports.createClient = async (req, res) => {
   }
 };
 
+/* Updates an existing client
+ * Params :
+ * - name : string?
+ * - surname : string?
+ * - email : string? (unique)
+ * - phone_number : string? (unique)
+ * - address : string?
+ */
 exports.updateClient = async (req, res) => {
   try {
     const data = req.body;
@@ -125,19 +136,18 @@ exports.updateClient = async (req, res) => {
   }
 };
 
+/*======*/
+/* GAME */
+/*======*/
+
+/* Returns existing games
+ * Params :
+ * - query : string (name or editor)
+ */
 exports.getGames = async (req, res) => {
   try {
-    const games = await getGame({});
-    res.status(200).json({ games: games });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-exports.getGame = async (req, res) => {
-  try {
-    const data = req.params;
-    const games = await getGame(data);
+    const { query } = req.query;
+    const games = await getGames(query);
     res.status(200).json({ games: games });
   } catch (error) {
     res.status(500).json({ message: error.message });

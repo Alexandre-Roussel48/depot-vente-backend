@@ -6,6 +6,18 @@ const {
 const { deleteClient } = require('../models/clientModel');
 const { createGame, updateGame, deleteGame } = require('../models/gameModel');
 
+/*=========*/
+/* SESSION */
+/*=========*/
+
+/* Creates a new session
+ * Pre-requisites : new session doesn't overlap existing ones
+ * Params :
+ * - begin_date : string ISO FORMAT
+ * - end_date : string ISO FORMAT
+ * - commission : number
+ * - fees : number
+ */
 exports.createSession = async (req, res) => {
   try {
     const data = req.body;
@@ -17,6 +29,12 @@ exports.createSession = async (req, res) => {
   }
 };
 
+/* Updates an existing session
+ * Pre-requisites : only updates commission & fees
+ * Params :
+ * - commission : number?
+ * - fees : number?
+ */
 exports.updateSession = async (req, res) => {
   try {
     const data = req.body;
@@ -28,6 +46,11 @@ exports.updateSession = async (req, res) => {
   }
 };
 
+/* Deletes an existing session
+ * Params :
+ * - id : number
+ * Remark : Doesn't delete associated data (realgames, transactions, etc...)
+ */
 exports.deleteSession = async (req, res) => {
   try {
     const data = req.body;
@@ -39,6 +62,15 @@ exports.deleteSession = async (req, res) => {
   }
 };
 
+/*========*/
+/* CLIENT */
+/*========*/
+
+/* Deletes an existing client
+ * Params :
+ * - id : string
+ * Remark : Doesn't delete associated data (realgames, transactions, etc...)
+ */
 exports.deleteClient = async (req, res) => {
   try {
     const data = req.body;
@@ -50,6 +82,15 @@ exports.deleteClient = async (req, res) => {
   }
 };
 
+/*======*/
+/* GAME */
+/*======*/
+
+/* Creates a new game
+ * Params :
+ * - name : string
+ * - editor : string
+ */
 exports.createGame = async (req, res) => {
   try {
     const data = req.body;
@@ -61,6 +102,11 @@ exports.createGame = async (req, res) => {
   }
 };
 
+/* Updates an existing game
+ * Params :
+ * - name : string?
+ * - editor : string?
+ */
 exports.updateGame = async (req, res) => {
   try {
     const data = req.body;
@@ -72,6 +118,10 @@ exports.updateGame = async (req, res) => {
   }
 };
 
+/* Deletes an existing game
+ * Params :
+ * - id : number
+ */
 exports.deleteGame = async (req, res) => {
   try {
     const data = req.body;
