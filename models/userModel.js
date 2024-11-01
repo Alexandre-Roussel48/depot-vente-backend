@@ -17,20 +17,19 @@ async function getUserByEmail(data) {
       },
     });
 
-    return user; // Renvoie l'utilisateur trouvé ou null s'il n'existe pas
+    return user;
   } catch (error) {
     throw new Error(`Error getting user : ${error.message}`);
   }
 }
 
-//user: utilisateur de la db; data: utilisateur qui tente de se connecter
 async function comparePasswords(user, data) {
   try {
-    const isPasswordValid = await bcrypt.compare(data.password, user.pwd_hash); // Corrected this line
-
-    console.log(`Password is ${!isPasswordValid ? 'not' : ''} valid!`);
-
-    return isPasswordValid; // Return true if passwords match, false otherwise
+    const isPasswordValid = await bcrypt.compare(
+      data.password + user.pwd_salt,
+      user.pwd_hash
+    );
+    return isPasswordValid;
   } catch (error) {
     throw new Error(`Error comparing passwords: ${error.message}`);
   }
