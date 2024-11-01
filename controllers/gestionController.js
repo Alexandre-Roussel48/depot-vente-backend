@@ -3,7 +3,11 @@ const {
   comparePasswords,
   createJwt,
 } = require('../models/userModel');
-const { createRealGames, saleRealGame } = require('../models/realGameModel');
+const {
+  createRealGames,
+  saleRealGame,
+  getRealGamesByClient,
+} = require('../models/realGameModel');
 const {
   createDepositTransaction,
   createSaleTransaction,
@@ -199,6 +203,26 @@ exports.registerSale = async (req, res) => {
     const transactionData = await createSaleTransaction(data, session.id);
     const realGameData = await saleRealGame(data, transactionData.id);
     res.status(200).json({ transactionData, realGameData });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+/*==========*/
+/* REALGAME */
+/*==========*/
+
+/* Returns real games that is own by a specific client
+ * Params :
+ * - query : string (email or phone_number)
+ */
+
+exports.getRealGamesByClient = async (req, res) => {
+  try {
+    const { query } = req.query;
+    const client = await getClients(query);
+    const realGameByClient = await getRealGamesByClient(client);
+    res.status(200).json({ realGames: realGameByClient });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

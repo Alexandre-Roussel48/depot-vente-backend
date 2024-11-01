@@ -33,10 +33,17 @@ function gestionRoutes() {
     '/game',
     gestionController.getGames
   ); /* GET  /api/gestion/game(?query)   -> Returns all games matching query   */
+
+  gestionRouter.post(
+    '/sale',
+    gestionController.registerSale
+  ); /* POST /api/gestion/sale           ->  Returns transaction and deposit data */
+
+  gestionRouter.get(
+    '/client/realgames',
+    gestionController.getRealGamesByClient
+  ); /* GET /api/gestion/client/realgames  ->  Returns reals games own by a specific client */
   /*
-  gestionRouter.post('/sale', gestionController.registerSale);
-  gestionRouter.get('/client', gestionController.clientId);
-  gestionRouter.get('/client/realgames', gestionController.realGamesClient);
   gestionRouter.get('/client/due', gestionController.due);
   gestionRouter.get('/client/withdraw', gestionController.withdraw);
   gestionRouter.get('/promocode', gestionController.promocode);
