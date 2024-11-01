@@ -3,9 +3,9 @@ const {
   comparePasswords,
   createJwt,
 } = require('../models/userModel');
-const { createRealGame } = require('../models/realGameModel');
-const { createTransaction } = require('../models/transactionModel');
-const { getSessions } = require('../models/sessionModel');
+const { createRealGames } = require('../models/realGameModel');
+const { createDepositTransaction } = require('../models/transactionModel');
+const { getSessions, getSessionByDate } = require('../models/sessionModel');
 const {
   getClients,
   createClient,
@@ -13,6 +13,15 @@ const {
 } = require('../models/clientModel');
 const { getGames } = require('../models/gameModel');
 
+/*=======*/
+/* LOGIN */
+/*=======*/
+
+/* Delivers a JWTToken as cookie
+ * Params :
+ * - email : string
+ * - password : string
+ */
 exports.login = async (req, res) => {
   try {
     const data = req.body;
@@ -45,12 +54,32 @@ exports.login = async (req, res) => {
   }
 };
 
-exports.deposit = async (req, res) => {
+/*=========*/
+/* DEPOSIT */
+/*=========*/
+
+/* Creates a new deposit
+ * Params :
+ * - client_id : string
+ * - discount : number
+ * - deposit : [] with :
+ *    - game_id : number
+ *    - qty : number
+ *    - unit_price : number
+ */
+exports.createDeposit = async (req, res) => {
   try {
     const data = req.body;
-    const transactionData = await createTransaction(data);
-    const realGameData = await createRealGame(data);
-    res.json(transactionData, realGameData);
+
+    const session = await getSessionByDate(new Date().toISOString(), true);
+
+    const transactionData = await createDepositTransaction(
+      session.id,
+      session.fees,
+      data
+    );
+    const realGameData = await createRealGames(session.id, data);
+    res.status(200).json({ transactionData, realGameData });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
