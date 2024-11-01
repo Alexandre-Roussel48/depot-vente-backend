@@ -21,19 +21,21 @@ async function getSessions() {
 /* Returns the session (if exists) where date falls
  * Params :
  * - date : string ISO FORMAT
+ * - verbose : boolean
  */
-async function getSessionByDate(date) {
+async function getSessionByDate(date, verbose) {
   try {
     const session = await prisma.session.findFirst({
       where: {
         begin_date: { lte: date },
         end_date: { gte: date },
       },
-      select: {
-        id: true,
-        begin_date: true,
-        end_date: true,
-      },
+      ...(!verbose && {
+        select: {
+          begin_date: true,
+          end_date: true,
+        },
+      }),
     });
 
     return session;
