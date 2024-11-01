@@ -19,7 +19,7 @@ enum Status {
   WITHDRAWN
 }
 
-enum Types {
+enum Type {
   DEPOSIT
   COMMISSION
   SALE
@@ -69,14 +69,14 @@ model Transaction {
   id                  Int         @id @default(autoincrement())
   date                DateTime    @default(now())
   value               Int
-  Types               Types
+  type                Type
   session             Session     @relation(fields: [session_id], references: [id])
   session_id          Int
   seller              Client      @relation(fields: [seller_id], references: [id], name: "Seller")
   seller_id           String
   buyer               Client?     @relation(fields: [buyer_id], references: [id], name: "Buyer") 
-  buyer_id            String
-  realgames           Realgame[] 
+  buyer_id            String?
+  realgames           Realgame?
 }
 
 model Realgame {
@@ -90,5 +90,5 @@ model Realgame {
   game                Game        @relation(fields: [game_id], references: [id])
   game_id             Int
   sale                Transaction? @relation(fields: [sale_id], references: [id]) 
-  sale_id             Int?
+  sale_id             Int?        @unique
 }
