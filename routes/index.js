@@ -16,7 +16,7 @@ function routes() {
   router.get(
     '/catalog',
     indexController.getCurrentCatalog
-  ); /* GET /api/catalog -> Returns current realgames  */
+  ); /* GET /api/catalog(?query) -> Returns current realgames  */
 
   //router.use('/admin', verifyAdmin, adminRoutes()); /!\ to use on prod
 

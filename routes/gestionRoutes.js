@@ -3,9 +3,11 @@ const gestionController = require('../controllers/gestionController');
 
 function gestionRoutes() {
   const gestionRouter = express.Router();
-  gestionRouter.post('/login', gestionController.login);
 
-  gestionRouter.get('/realgames', gestionController.realGames);
+  gestionRouter.post(
+    '/login',
+    gestionController.login
+  ); /* POST /api/gestion/login              ->  Returns a JWTToken as cookie */
   gestionRouter.post('/deposit', gestionController.deposit);
 
   gestionRouter.get(
