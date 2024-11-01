@@ -3,7 +3,7 @@ const {
   comparePasswords,
   createJwt,
 } = require('../models/userModel');
-const { createRealGame, getRealGame } = require('../models/realGameModel');
+const { createRealGame } = require('../models/realGameModel');
 const { createTransaction } = require('../models/transactionModel');
 const { getSessions } = require('../models/sessionModel');
 const {
@@ -19,36 +19,27 @@ exports.login = async (req, res) => {
     const user = await getUserByEmail(data.email);
 
     if (!user) {
-      // Si l'utilisateur n'est pas trouvé, renvoyer une réponse d'erreur
-      return res.status(401).json({ message: "Nom d'utilisateur introuvable" });
+      // Si l'utilisateur n'est pas trouvé, renvoyer une réponse d'erreur générique
+      return res
+        .status(401)
+        .json({ message: "Nom d'utilisateur ou mot de passe incorrect" });
     }
 
     const isPasswordValid = await comparePasswords(user, data);
 
     if (!isPasswordValid) {
-      // Si le mot de passe n'est pas valide, renvoyer une réponse d'erreur
-      return res.status(401).json({ message: 'mot de passe incorrect' });
+      // Si le mot de passe n'est pas valide, renvoyer une réponse d'erreur générique
+      return res
+        .status(401)
+        .json({ message: "Nom d'utilisateur ou mot de passe incorrect" });
     }
     const JWTtoken = await createJwt(user);
-    // Set HttpOnly cookie with the JWT
-    /*res.cookie('jwtToken', JWTtoken, {
-            httpOnly: true, // Cookie is accessible only by the server
-            maxAge: 3600000, // Expiry in milliseconds (1 hour)
-            secure: false // Set to true if using HTTPS
-        });*/
-
-    // /!\ ne pas renvoyer le token en json (cf en dessous) mais set le cookie comme au dessus. /!\
-    res.status(200).json({ token: JWTtoken });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-exports.realGames = async (req, res) => {
-  try {
-    const query = req.body;
-    const realGames = await getRealGame(query);
-    res.json(realGames);
+    res.cookie('authToken', JWTtoken, {
+      httpOnly: true,
+      maxAge: 3600000,
+      secure: false,
+    });
+    res.sendStatus(200);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
