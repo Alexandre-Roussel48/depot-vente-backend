@@ -55,22 +55,19 @@ async function getStockedRealGamesBySession(session_id, queryParams) {
   }
 }
 
-async function createRealGame(data) {
+async function createRealGames(session_id, data) {
   try {
     const realGames = [];
-    //const currentSession = await getSession();
-    // /!\ la session courante doit etre passee depuis le controller ^
 
-    for (const game of data.games) {
-      // Créer plusieurs RealGames selon la quantité
-      for (let i = 0; i < game.quantity; i++) {
+    for (const game of data.deposit) {
+      for (let i = 0; i < game.qty; i++) {
         const realGame = await prisma.realgame.create({
           data: {
             unit_price: game.unit_price,
             status: Status.STOCK, // Status initial en STOCK
-            session: 1,
-            seller: data.id_client,
-            game: game.game_id,
+            session_id: session_id,
+            seller_id: data.client_id,
+            game_id: game.game_id,
           },
         });
         realGames.push(realGame);
@@ -84,5 +81,5 @@ async function createRealGame(data) {
 
 module.exports = {
   getStockedRealGamesBySession,
-  createRealGame,
+  createRealGames,
 };
