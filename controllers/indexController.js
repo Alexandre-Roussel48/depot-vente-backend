@@ -1,5 +1,5 @@
 const { getSessionByDate } = require('../models/sessionModel');
-const { getRealGamesBySession } = require('../models/realGameModel');
+const { getStockedRealGamesBySession } = require('../models/realGameModel');
 
 /*=========*/
 /* SESSION */
@@ -24,8 +24,10 @@ exports.getCurrentCatalog = async (req, res) => {
   try {
     const session = await getSessionByDate(new Date().toISOString());
     const session_id = session.id;
-    const catalog = await getRealGamesBySession(session_id);
-    res.status(200).json({ catalog: catalog });
+
+    const query = req.query;
+    const realgames = await getStockedRealGamesBySession(session_id, query);
+    res.status(200).json({ realgames: realgames });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
