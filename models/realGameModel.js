@@ -6,36 +6,51 @@ const prisma = new PrismaClient();
 /* REALGAME */
 /*==========*/
 
-async function getRealGamesBySession(session_id) {
+async function getStockedRealGamesBySession(session_id, queryParams) {
   try {
+    const { query, range } = queryParams;
+
     const realgames = await prisma.realgame.findMany({
       where: {
         session_id: session_id,
+        status: Status.STOCK,
+        OR: [
+          { game: { name: { startsWith: query } } },
+          { game: { editor: { startsWith: query } } },
+        ],
+        ...(range && {
+          unit_price: { gte: +range.split('-')[0], lte: +range.split('-')[1] },
+        }),
+      },
+      include: {
+        game: true,
       },
     });
-    return realgames;
+
+    const groupedData = realgames.reduce((acc, item) => {
+      const { unit_price, seller_id, game_id, game } = item;
+      const { name, editor } = game;
+      const key = `${unit_price}-${seller_id}-${game_id}`;
+
+      if (!acc[key]) {
+        acc[key] = {
+          unit_price,
+          seller_id,
+          name,
+          editor,
+          quantity: 0,
+        };
+      }
+
+      acc[key].quantity += 1;
+      return acc;
+    }, {});
+
+    const result = Object.values(groupedData);
+    return result;
   } catch (error) {
     throw new Error(
       `Erreur serveur lors de la récupération du catalogue: ${error.message}`
-    );
-  }
-}
-
-async function getRealGame(data) {
-  try {
-    const realgame = await prisma.realgame.findMany({
-      where: {
-        unit_price: data.unit_price,
-        status: data.status,
-        session_id: data.session_id,
-        seller_id: data.seller_id,
-        game_id: data.game_id,
-      },
-    });
-    return realgame;
-  } catch (error) {
-    throw new Error(
-      `Erreur serveur lors de la récupération des realGame: ${error.message}`
     );
   }
 }
@@ -68,7 +83,6 @@ async function createRealGame(data) {
 }
 
 module.exports = {
-  getRealGamesBySession,
-  getRealGame,
+  getStockedRealGamesBySession,
   createRealGame,
 };
