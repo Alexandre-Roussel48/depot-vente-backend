@@ -29,7 +29,13 @@ async function getSessionByDate(date) {
         begin_date: { lte: date },
         end_date: { gte: date },
       },
+      select: {
+        id: true,
+        begin_date: true,
+        end_date: true,
+      },
     });
+
     return session;
   } catch (error) {
     throw new Error(
