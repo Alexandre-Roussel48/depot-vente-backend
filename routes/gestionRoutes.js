@@ -7,8 +7,11 @@ function gestionRoutes() {
   gestionRouter.post(
     '/login',
     gestionController.login
-  ); /* POST /api/gestion/login              ->  Returns a JWTToken as cookie */
-  gestionRouter.post('/deposit', gestionController.deposit);
+  ); /* POST /api/gestion/login          ->  Returns a JWTToken as cookie */
+  gestionRouter.post(
+    '/deposit',
+    gestionController.createDeposit
+  ); /* POST /api/gestion/deposit        ->  Returns transaction and deposit data */
 
   gestionRouter.get(
     '/session',
