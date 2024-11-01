@@ -1,4 +1,4 @@
-const { PrismaClient, Types } = require('@prisma/client');
+const { PrismaClient, Type } = require('@prisma/client');
 
 const prisma = new PrismaClient();
 
@@ -6,15 +6,13 @@ const prisma = new PrismaClient();
 /* TRANSACTION */
 /*=============*/
 
-async function createTransaction(data) {
+async function createDepositTransaction(session_id, session_fees, data) {
   try {
-    const totalValue = await getValue(data.games);
-    //const currentSession = await getSession();
     const transaction = await prisma.transaction.create({
       data: {
-        value: totalValue,
-        Types: Types.DEPOSIT,
-        session_id: 1,
+        value: session_fees - session_fees * data.discount,
+        type: Type.DEPOSIT,
+        session_id: session_id,
         seller_id: data.client_id,
       },
     });
@@ -24,12 +22,6 @@ async function createTransaction(data) {
   }
 }
 
-async function getValue(games) {
-  return games.reduce((total, game) => {
-    return total + game.quantity * game.unit_price;
-  }, 0);
-}
-
 module.exports = {
-  createTransaction,
+  createDepositTransaction,
 };
