@@ -38,11 +38,11 @@ async function getStockedRealGamesBySession(session_id, queryParams) {
           seller_id,
           name,
           editor,
-          quantity: 0,
+          qty: 0,
         };
       }
 
-      acc[key].quantity += 1;
+      acc[key].qty += 1;
       return acc;
     }, {});
 
