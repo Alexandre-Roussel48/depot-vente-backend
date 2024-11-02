@@ -27,7 +27,7 @@ exports.getCurrentCatalog = async (req, res) => {
 
     const query = req.query;
     const realgames = await getStockedRealGamesBySession(session_id, query);
-    res.status(200).json({ realgames: realgames });
+    res.status(200).json(realgames);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
