@@ -3,8 +3,15 @@ const {
   comparePasswords,
   createJwt,
 } = require('../models/userModel');
-const { createRealGames } = require('../models/realGameModel');
-const { createDepositTransaction } = require('../models/transactionModel');
+const {
+  createRealGames,
+  saleRealGame,
+  getRealGamesByClient,
+} = require('../models/realGameModel');
+const {
+  createDepositTransaction,
+  createSaleTransaction,
+} = require('../models/transactionModel');
 const { getSessions, getSessionByDate } = require('../models/sessionModel');
 const {
   getClients,
@@ -169,6 +176,53 @@ exports.getGames = async (req, res) => {
     const { query } = req.query;
     const games = await getGames(query);
     res.status(200).json({ games: games });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+/*======*/
+/* SALE */
+/*======*/
+
+/* Creates a new sale
+ * Params :
+ * - buyer_id : string
+ * - seller_id : string
+ * - unit_price : number
+ * - sale : [] with :
+ *    - realgame_id : number
+ */
+
+exports.registerSale = async (req, res) => {
+  try {
+    const data = req.body;
+
+    const session = await getSessionByDate(new Date().toISOString(), true);
+
+    const transactionData = await createSaleTransaction(data, session.id);
+    const realGameData = await saleRealGame(data, transactionData.id);
+    res.status(200).json({ transactionData, realGameData });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+/*==========*/
+/* REALGAME */
+/*==========*/
+
+/* Returns real games that is own by a specific client
+ * Params :
+ * - query : string (email or phone_number)
+ */
+
+exports.getRealGamesByClient = async (req, res) => {
+  try {
+    const { query } = req.query;
+    const client = await getClients(query);
+    const realGameByClient = await getRealGamesByClient(client);
+    res.status(200).json({ realGames: realGameByClient });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
