@@ -55,7 +55,7 @@ exports.login = async (req, res) => {
       maxAge: 3600000,
       secure: false,
     });
-    res.sendStatus(200);
+    res.status(200).json({ message: 'Connexion réussie' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
