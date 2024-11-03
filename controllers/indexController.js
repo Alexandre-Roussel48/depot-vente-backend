@@ -9,7 +9,7 @@ const { getStockedRealGamesBySession } = require('../models/realGameModel');
 exports.getCurrentSession = async (req, res) => {
   try {
     const session = await getSessionByDate(new Date().toISOString(), false);
-    res.status(200).json({ session: session });
+    res.status(200).json(session);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

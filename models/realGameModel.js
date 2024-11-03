@@ -24,20 +24,23 @@ async function getStockedRealGamesBySession(session_id, queryParams) {
       },
       include: {
         game: true,
+        seller: true,
       },
     });
 
     const groupedData = realgames.reduce((acc, item) => {
-      const { unit_price, seller_id, game_id, game } = item;
-      const { name, editor } = game;
+      const { unit_price, seller_id, game_id, game, seller } = item;
+      const { name: gameName, editor: gameEditor } = game;
+      const { name: sellerName, surname: sellerSurname } = seller;
       const key = `${unit_price}-${seller_id}-${game_id}`;
 
       if (!acc[key]) {
         acc[key] = {
           unit_price,
-          seller_id,
-          name,
-          editor,
+          gameName,
+          gameEditor,
+          sellerName,
+          sellerSurname,
           qty: 0,
         };
       }
