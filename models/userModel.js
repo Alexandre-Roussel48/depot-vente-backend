@@ -57,13 +57,25 @@ async function createJwt(user) {
       { expiresIn: process.env.ACCESS_TOKEN_EXPIRY }
     ); // Expires in 1 hour
   } catch (error) {
-    console.log(`Error creating Jwt : ${error.message}`);
+    throw new Error(`Error creating Jwt : ${error.message}`);
   }
 }
+
+const verifyJwt = (token) => {
+  return new Promise((resolve, reject) => {
+    jwt.verify(token, process.env.SECRET_KEY, (error, decoded) => {
+      if (error) {
+        return reject(error);
+      }
+      resolve(decoded);
+    });
+  });
+};
 
 module.exports = {
   getUserByEmail,
   comparePasswords,
   hashPassword,
   createJwt,
+  verifyJwt,
 };
