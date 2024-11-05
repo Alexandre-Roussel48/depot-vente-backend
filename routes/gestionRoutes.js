@@ -8,10 +8,6 @@ function gestionRoutes() {
     '/login',
     gestionController.login
   ); /* POST /api/gestion/login          ->  Returns a JWTToken as cookie */
-  gestionRouter.get(
-    '/verify',
-    gestionController.verify
-  ); /* POST /api/gestion/verify         ->  Returns auth status */
   gestionRouter.post(
     '/deposit',
     gestionController.createDeposit
