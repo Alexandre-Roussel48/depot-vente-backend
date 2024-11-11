@@ -44,16 +44,46 @@ function gestionRoutes() {
     gestionController.getRealGamesByClient
   ); /* GET /api/gestion/client/realgames  ->  Returns reals games own by a specific client */
 
-  gestionRouter.get('/client/due', gestionController.dueToSeller);
-  /*
-  gestionRouter.get('/client/withdraw', gestionController.withdraw);
-  gestionRouter.get('/promocode', gestionController.promocode);
-  gestionRouter.get('/fees', gestionController.fees);
-  gestionRouter.get('/balance/due', gestionController.dueSellers);
-  gestionRouter.get('/balance/deposit-fees', gestionController.deposit_fees);
-  gestionRouter.get('/commissions', gestionController.commissions);
-  gestionRouter.get('/transactions', gestionController.transactions);
-*/
+  gestionRouter.get(
+    '/client/due/:id',
+    gestionController.dueToSeller
+  ); /* GET /api/gestion/client/due  ->  Returns due that a client can withdraw */
+
+  gestionRouter.get(
+    '/client/withdraw/:id',
+    gestionController.withdraw
+  ); /* GET /api/gestion/client/withdraw/:id  ->  Returns withdrawn money by seller for current session */
+
+  gestionRouter.get(
+    '/promocode',
+    gestionController.promocode
+  ); /* GET /api/gestion/promocode  ->  Returns the amount of money that a client will pay with the discount or null if the promocode doesn't exist */
+
+  gestionRouter.get(
+    '/fees',
+    gestionController.deposit_fees
+  ); /* GET /api/gestion/fees  ->  Returns total fees for the current session  */
+
+  gestionRouter.get(
+    '/balance/due',
+    gestionController.dueToSellers
+  ); /* GET /api/gestion/balance/due  ->  Returns total due to sellers for the current session  */
+
+  gestionRouter.get(
+    '/balance/deposit-fees',
+    gestionController.totalFees
+  ); /* GET /api/gestion/balance/deposit-fees  ->  Returns total due to sellers for the current session  */
+
+  gestionRouter.get(
+    '/commissions',
+    gestionController.commissions
+  ); /* GET /api/gestion/commissions  ->  Returns total commissions collected in the current session  */
+
+  gestionRouter.get(
+    '/transactions',
+    gestionController.transactions
+  ); /* GET /api/gestion/transactions  ->  Returns total transactions in the current session  */
+
   return gestionRouter;
 }
 

@@ -28,6 +28,26 @@ async function getClients(data) {
   }
 }
 
+/* Returns existing clients
+ * Params :
+ * - id : Number
+ */
+
+async function getClientById(client_id) {
+  try {
+    const client = await prisma.client.findUnique({
+      where: {
+        id: client_id,
+      },
+    });
+    return client;
+  } catch (error) {
+    throw new Error(
+      `Erreur serveur lors de la récupération du client avec son id: ${error.message}`
+    );
+  }
+}
+
 /* Creates a new client
  * Pre-requisites : new client email and/or phone number doesn't already exists
  * Params :
@@ -103,6 +123,7 @@ async function deleteClient(data) {
 
 module.exports = {
   getClients,
+  getClientById,
   createClient,
   updateClient,
   deleteClient,

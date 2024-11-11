@@ -136,10 +136,24 @@ async function deleteSession(data) {
   }
 }
 
+async function getDepositFees(session_id) {
+  try {
+    const deposit_fees = await prisma.session.findUnique({
+      where: { id: session_id },
+    });
+    return deposit_fees;
+  } catch (error) {
+    throw new Error(
+      `Erreur serveur lors de la récupération des fraits de dépots: ${error.message}`
+    );
+  }
+}
+
 module.exports = {
   getSessions,
   getSessionByDate,
   createSession,
   updateSession,
   deleteSession,
+  getDepositFees,
 };
