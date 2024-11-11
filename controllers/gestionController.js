@@ -12,6 +12,8 @@ const {
 const {
   createDepositTransaction,
   createSaleTransaction,
+  getPayTransactionByClient,
+  getDue,
 } = require('../models/transactionModel');
 const { getSessions, getSessionByDate } = require('../models/sessionModel');
 const {
@@ -185,6 +187,28 @@ exports.updateClient = async (req, res) => {
   }
 };
 
+/* Returns amount due to a seller in a session
+ * Params :
+ * - query : string (email or phone_number)
+ */
+exports.dueToSeller = async (req, res) => {
+  try {
+    const { query } = req.query;
+
+    const client = await getClients(query);
+
+    const session = await getSessionByDate(new Date().toISOString(), true);
+
+    const transactions = await getPayTransactionByClient(client, session.id);
+
+    const due = await getDue(transactions);
+
+    res.status(200).json({ due });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 /*======*/
 /* GAME */
 /*======*/
@@ -222,7 +246,7 @@ exports.registerSale = async (req, res) => {
 
     const session = await getSessionByDate(new Date().toISOString(), true);
 
-    const transactionData = await createSaleTransaction(data, session.id);
+    const transactionData = await createSaleTransaction(data, session);
     const realGameData = await saleRealGame(data, transactionData.id);
     res.status(200).json({ transactionData, realGameData });
   } catch (error) {

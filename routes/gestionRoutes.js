@@ -47,8 +47,9 @@ function gestionRoutes() {
     '/client/realgames',
     gestionController.getRealGamesByClient
   ); /* GET /api/gestion/client/realgames  ->  Returns reals games own by a specific client */
+
+  gestionRouter.get('/client/due', gestionController.dueToSeller);
   /*
-  gestionRouter.get('/client/due', gestionController.due);
   gestionRouter.get('/client/withdraw', gestionController.withdraw);
   gestionRouter.get('/promocode', gestionController.promocode);
   gestionRouter.get('/fees', gestionController.fees);
