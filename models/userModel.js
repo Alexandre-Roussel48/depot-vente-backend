@@ -61,21 +61,9 @@ async function createJwt(user) {
   }
 }
 
-const verifyJwt = (token) => {
-  return new Promise((resolve, reject) => {
-    jwt.verify(token, process.env.SECRET_KEY, (error, decoded) => {
-      if (error) {
-        return reject(error);
-      }
-      resolve(decoded);
-    });
-  });
-};
-
 module.exports = {
   getUserByEmail,
   comparePasswords,
   hashPassword,
   createJwt,
-  verifyJwt,
 };

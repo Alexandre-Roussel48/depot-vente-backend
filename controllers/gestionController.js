@@ -2,7 +2,6 @@ const {
   getUserByEmail,
   comparePasswords,
   createJwt,
-  verifyJwt,
 } = require('../models/userModel');
 const {
   createRealGames,
@@ -55,31 +54,17 @@ exports.login = async (req, res) => {
     const JWTtoken = await createJwt(user);
     res.cookie('authToken', JWTtoken, {
       httpOnly: true,
-      maxAge: 3600000,
+      maxAge: 28800,
       secure: false,
       sameSite: 'lax',
     });
-    res.status(200).json({ message: 'Connexion réussie' });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-exports.verify = async (req, res) => {
-  try {
-    const token = req.cookies.authToken;
-
-    if (!token) {
-      return res.sendStatus(401);
-    }
-
-    const user = await verifyJwt(token);
-
-    if (!user) {
-      return res.sendStatus(401);
-    }
-
-    res.sendStatus(200);
+    res
+      .status(200)
+      .json({
+        expirationInSec: 28800,
+        role: user.role,
+        message: 'Connexion réussie',
+      });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
