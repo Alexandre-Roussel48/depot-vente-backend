@@ -4,16 +4,9 @@ const {
   createJwt,
 } = require('../models/userModel');
 const {
-  createRealGames,
-  saleRealGame,
-  //getRealGamesByClient,
-} = require('../models/realGameModel');
-const {
-  createDepositTransaction,
   createSaleTransaction,
   getPayTransactionByClient,
   getDue,
-  createPayTransaction,
   getPayTransaction,
   getSaleTransaction,
   getCommissions,
@@ -74,42 +67,6 @@ exports.login = async (req, res) => {
       role: user.role,
       message: 'Connexion réussie',
     });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-/*=========*/
-/* DEPOSIT */
-/*=========*/
-
-/* Creates a new deposit
- * Params :
- * - client_id : string
- * - discount : number
- * - deposit : [] with :
- *    - game_id : number
- *    - qty : number
- *    - unit_price : number
- */
-exports.createDeposit = async (req, res) => {
-  try {
-    const data = req.body;
-
-    const session = await getSessionByDate(new Date().toISOString(), true);
-
-    const transactionData = await createDepositTransaction(
-      session.id,
-      session.fees,
-      data.client_id,
-      data.discount
-    );
-    const realGameData = await createRealGames(
-      session.id,
-      data.client_id,
-      data.deposit
-    );
-    res.status(200).json({ transactionData, realGameData });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -269,30 +226,6 @@ exports.getGames = async (req, res) => {
     const { query } = req.query;
     const games = await getGames(query);
     res.status(200).json({ games: games });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-/*======*/
-/* SALE */
-/*======*/
-
-/* Creates a new sale
- * Params :
- * - [] with :
- *    - {realgame_id : string}
- */
-
-exports.registerSale = async (req, res) => {
-  try {
-    const data = req.body;
-
-    const session = await getSessionByDate(new Date().toISOString(), true);
-
-    const transactionData = await createPayTransaction(data, session);
-    const realGameData = await saleRealGame(data, transactionData.id);
-    res.status(200).json({ transactionData, realGameData });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

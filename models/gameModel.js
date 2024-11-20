@@ -6,27 +6,9 @@ const prisma = new PrismaClient();
 /* GAME */
 /*======*/
 
-/* Returns existing games
- * Params :
- * - data : string (name or editor)
- */
-async function getGames(data) {
-  try {
-    const games = await prisma.game.findMany({
-      where: {
-        OR: [
-          { name: { startsWith: data.toLowerCase() } },
-          { editor: { startsWith: data.toLowerCase() } },
-        ],
-      },
-    });
-    return games;
-  } catch (error) {
-    throw new Error(
-      `Erreur serveur lors de la récupération des jeux: ${error.message}`
-    );
-  }
-}
+/*********
+ * CREATE *
+ *********/
 
 /* Creates a new game
  * Params :
@@ -48,6 +30,10 @@ async function createGame(data) {
     );
   }
 }
+
+/*********
+ * UPDATE *
+ *********/
 
 /* Updates an existing game
  * Params :
@@ -71,6 +57,10 @@ async function updateGame(data) {
   }
 }
 
+/*********
+ * DELETE *
+ *********/
+
 /* Deletes an existing game
  * Params :
  * - data : dict with :
@@ -88,9 +78,35 @@ async function deleteGame(data) {
   }
 }
 
+/**********
+ * GETTERS *
+ **********/
+
+/* Returns existing games
+ * Params :
+ * - data : string (name or editor)
+ */
+async function getGames(data) {
+  try {
+    const games = await prisma.game.findMany({
+      where: {
+        OR: [
+          { name: { startsWith: data.toLowerCase() } },
+          { editor: { startsWith: data.toLowerCase() } },
+        ],
+      },
+    });
+    return games;
+  } catch (error) {
+    throw new Error(
+      `Erreur serveur lors de la récupération des jeux: ${error.message}`
+    );
+  }
+}
+
 module.exports = {
-  getGames,
   createGame,
   updateGame,
   deleteGame,
+  getGames,
 };

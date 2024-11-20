@@ -40,7 +40,7 @@ model Session {
   id                  Int         @id @default(autoincrement())
   begin_date          DateTime
   end_date            DateTime
-  commission          Int
+  commission          Decimal
   fees                Int
   transactions        Transaction[] 
   realgames           Realgame[]    
@@ -67,18 +67,19 @@ model Client {
 model Transaction {
   id                  Int         @id @default(autoincrement())
   date                DateTime    @default(now())
-  value               Int
+  value               Decimal
   type                Type
   session             Session     @relation(fields: [session_id], references: [id])
   session_id          Int
   seller              Client      @relation(fields: [seller_id], references: [id], name: "Seller")
   seller_id           String
-  realgames           Realgame?
+  realgame            Realgame    @relation(fields: [realgame_id], references: [id])
+  realgame_id         String
 }
 
 model Realgame {
   id                  String      @id @default(uuid())
-  unit_price          Int
+  unit_price          Decimal
   status              Status
   session             Session     @relation(fields: [session_id], references: [id])
   session_id          Int
@@ -86,6 +87,5 @@ model Realgame {
   seller_id           String
   game                Game        @relation(fields: [game_id], references: [id])
   game_id             Int
-  sale                Transaction? @relation(fields: [sale_id], references: [id]) 
-  sale_id             Int?        @unique
+  transactions        Transaction[]
 }

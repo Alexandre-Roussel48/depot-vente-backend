@@ -1,6 +1,9 @@
 const express = require('express');
 const gestionController = require('../controllers/gestionController');
 
+const saleRoutes = require('./gestionsubroutes/saleRoutes');
+const depositRoutes = require('./gestionsubroutes/depositRoutes');
+
 function gestionRoutes() {
   const gestionRouter = express.Router();
 
@@ -8,10 +11,6 @@ function gestionRoutes() {
     '/login',
     gestionController.login
   ); /* POST /api/gestion/login          ->  Returns a JWTToken as cookie */
-  gestionRouter.post(
-    '/deposit',
-    gestionController.createDeposit
-  ); /* POST /api/gestion/deposit        ->  Returns transaction and deposit data */
 
   gestionRouter.get(
     '/session',
@@ -29,11 +28,6 @@ function gestionRoutes() {
     '/game',
     gestionController.getGames
   ); /* GET  /api/gestion/game(?query)   -> Returns all games matching query   */
-
-  gestionRouter.post(
-    '/sale',
-    gestionController.registerSale
-  ); /* POST /api/gestion/sale           ->  Returns transaction and deposit data */
 
   gestionRouter.get(
     '/client/realgames',
@@ -74,6 +68,9 @@ function gestionRoutes() {
     '/transactions',
     gestionController.transactions
   ); /* GET /api/gestion/transactions  ->  Returns total transactions in the current session  */
+
+  gestionRouter.use('/sale', saleRoutes());
+  gestionRouter.use('/deposit', depositRoutes());
 
   return gestionRouter;
 }

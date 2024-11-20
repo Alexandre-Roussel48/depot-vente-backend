@@ -6,25 +6,9 @@ const prisma = new PrismaClient();
 /* CLIENT */
 /*========*/
 
-/* Returns existing clients
- * Params :
- * - id : Number
- */
-
-async function getClientById(client_id) {
-  try {
-    const client = await prisma.client.findUnique({
-      where: {
-        id: client_id,
-      },
-    });
-    return client;
-  } catch (error) {
-    throw new Error(
-      `Erreur serveur lors de la récupération du client avec son id: ${error.message}`
-    );
-  }
-}
+/*********
+ * CREATE *
+ *********/
 
 /* Creates a new client
  * Pre-requisites : new client email and/or phone number doesn't already exists
@@ -54,6 +38,10 @@ async function createClient(data) {
   }
 }
 
+/*********
+ * UPDATE *
+ *********/
+
 /* Updates an existing client
  * Params :
  * - data : dict with :
@@ -82,6 +70,10 @@ async function updateClient(data) {
   }
 }
 
+/*********
+ * DELETE *
+ *********/
+
 /* Deletes existing client
  * Params :
  * - data : dict with :
@@ -99,9 +91,52 @@ async function deleteClient(data) {
   }
 }
 
+/**********
+ * GETTERS *
+ **********/
+
+/* Returns existing client
+ * Params :
+ * - id : Number
+ */
+async function getClientById(client_id) {
+  try {
+    const client = await prisma.client.findUnique({
+      where: {
+        id: client_id,
+      },
+    });
+    return client;
+  } catch (error) {
+    throw new Error(
+      `Erreur serveur lors de la récupération du client avec son id: ${error.message}`
+    );
+  }
+}
+
+/* Returns existing client
+ * Params :
+ * - email : string
+ */
+async function getClientByEmail(email) {
+  try {
+    const client = await prisma.client.findUnique({
+      where: {
+        email: email,
+      },
+    });
+    return client;
+  } catch (error) {
+    throw new Error(
+      `Erreur serveur lors de la récupération du client avec son id: ${error.message}`
+    );
+  }
+}
+
 module.exports = {
-  getClientById,
   createClient,
   updateClient,
   deleteClient,
+  getClientById,
+  getClientByEmail,
 };

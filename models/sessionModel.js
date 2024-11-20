@@ -6,45 +6,9 @@ const prisma = new PrismaClient();
 /* SESSION */
 /*=========*/
 
-/* Returns all sessions */
-async function getSessions() {
-  try {
-    const sessions = await prisma.session.findMany({});
-    return sessions;
-  } catch (error) {
-    throw new Error(
-      `Erreur serveur lors de la récupération des sessions: ${error.message}`
-    );
-  }
-}
-
-/* Returns the session (if exists) where date falls
- * Params :
- * - date : string ISO FORMAT
- * - verbose : boolean
- */
-async function getSessionByDate(date, verbose) {
-  try {
-    const session = await prisma.session.findFirst({
-      where: {
-        begin_date: { lte: date },
-        end_date: { gte: date },
-      },
-      ...(!verbose && {
-        select: {
-          begin_date: true,
-          end_date: true,
-        },
-      }),
-    });
-
-    return session;
-  } catch (error) {
-    throw new Error(
-      `Erreur serveur lors de la récupération de la session courante: ${error.message}`
-    );
-  }
-}
+/*********
+ * CREATE *
+ *********/
 
 /* Creates a new session
  * Pre-requisites : new session doesn't overlap existing ones
@@ -95,6 +59,10 @@ async function createSession(data) {
   }
 }
 
+/*********
+ * UPDATE *
+ *********/
+
 /* Updates an existing session
  * Pre-requisites : only updates commission & fees
  * Params :
@@ -118,6 +86,10 @@ async function updateSession(data) {
   }
 }
 
+/*********
+ * DELETE *
+ *********/
+
 /* Deletes an existing session
  * Params :
  * - data : dict with :
@@ -136,24 +108,54 @@ async function deleteSession(data) {
   }
 }
 
-async function getDepositFees(session_id) {
+/**********
+ * GETTERS *
+ **********/
+
+/* Returns the session (if exists) where date falls
+ * Params :
+ * - date : string ISO FORMAT
+ * - verbose : boolean
+ */
+async function getSessionByDate(date, verbose) {
   try {
-    const deposit_fees = await prisma.session.findUnique({
-      where: { id: session_id },
+    const session = await prisma.session.findFirst({
+      where: {
+        begin_date: { lte: date },
+        end_date: { gte: date },
+      },
+      ...(!verbose && {
+        select: {
+          begin_date: true,
+          end_date: true,
+        },
+      }),
     });
-    return deposit_fees;
+
+    return session;
   } catch (error) {
     throw new Error(
-      `Erreur serveur lors de la récupération des fraits de dépots: ${error.message}`
+      `Erreur serveur lors de la récupération de la session courante: ${error.message}`
+    );
+  }
+}
+
+/* Returns all sessions */
+async function getSessions() {
+  try {
+    const sessions = await prisma.session.findMany({});
+    return sessions;
+  } catch (error) {
+    throw new Error(
+      `Erreur serveur lors de la récupération des sessions: ${error.message}`
     );
   }
 }
 
 module.exports = {
-  getSessions,
-  getSessionByDate,
   createSession,
   updateSession,
   deleteSession,
-  getDepositFees,
+  getSessionByDate,
+  getSessions,
 };

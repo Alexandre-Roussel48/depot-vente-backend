@@ -1,10 +1,92 @@
-const { PrismaClient, Type } = require('@prisma/client');
+const { PrismaClient, Type, Status } = require('@prisma/client');
 
 const prisma = new PrismaClient();
 
 /*=============*/
 /* TRANSACTION */
 /*=============*/
+
+/*********
+ * CREATE *
+ *********/
+
+/* Creates a new sale transaction
+ * Pre-requisites : items of realgames are not already sold
+ * Params :
+ * - session : Session
+ * - realgames : array of realgame_id
+ */
+async function createSaleTransactions(session, realgames) {
+  try {
+    const saleTransactions = [];
+    for (let realgame_id of realgames) {
+      const realGame = await prisma.realgame.findFirst({
+        where: {
+          id: realgame_id,
+          session_id: session.id,
+          status: Status.STOCK,
+        },
+      });
+      if (!realGame) {
+        throw new Error(
+          "Jeu introuvable, n'appartenant pas a la session actuelle ou pas en stock"
+        );
+      }
+      const saleTransaction = await prisma.transaction.create({
+        data: {
+          value: realGame.unit_price - realGame.unit_price * session.commission,
+          type: Type.SALE,
+          session_id: session.id,
+          seller_id: realGame.seller_id,
+          realgame_id: realGame.id,
+        },
+      });
+      saleTransactions.push(saleTransaction);
+    }
+    return saleTransactions;
+  } catch (error) {
+    throw new Error(`Error creating sale transaction: ${error.message}`);
+  }
+}
+
+/* Creates a new commission transaction
+ * Pre-requisites : items of realgames are not already sold
+ * Params :
+ * - session : Session
+ * - realgames : array of realgame_id
+ */
+async function createCommissionTransactions(session, realgames) {
+  try {
+    const commissionTransactions = [];
+    for (let realgame_id of realgames) {
+      const realGame = await prisma.realgame.findFirst({
+        where: {
+          id: realgame_id,
+          session_id: session.id,
+          status: Status.STOCK,
+        },
+      });
+      if (!realGame) {
+        throw new Error(
+          "Jeu introuvable, n'appartenant pas a la session actuelle ou pas en stock"
+        );
+      }
+      const commissionTransaction = await prisma.transaction.create({
+        data: {
+          value: realGame.unit_price * session.commission,
+          type: Type.COMMISSION,
+          session_id: session.id,
+          seller_id: realGame.seller_id,
+          realgame_id: realGame.id,
+        },
+      });
+      commissionTransactions.push(commissionTransaction);
+    }
+    return commissionTransactions;
+  } catch (error) {
+    throw new Error(`Error creating sale transaction: ${error.message}`);
+  }
+}
 
 async function createDepositTransaction(
   session_id,
@@ -54,23 +136,9 @@ async function createPayTransaction(data, session) {
   }
 }
 
-async function createSaleTransaction(client_id, withdraw, session_id) {
-  try {
-    if (withdraw != 0) {
-      await prisma.transaction.create({
-        data: {
-          value: withdraw,
-          type: Type.SALE,
-          session_id: session_id,
-          seller_id: client_id,
-        },
-      });
-    }
-    return withdraw;
-  } catch (error) {
-    throw new Error(`Error creating sale transaction: ${error.message}`);
-  }
-}
+/**********
+ * GETTERS *
+ **********/
 
 async function getPayTransactionByClient(client_id, session_id) {
   /* SUGGESTION : update to getSaleAmountByClient -> returns total_sales (number) */
@@ -204,7 +272,8 @@ async function getDue(sales, alreadyWithdraw) {
 
 module.exports = {
   createDepositTransaction,
-  createSaleTransaction,
+  createSaleTransactions,
+  createCommissionTransactions,
   createPayTransaction,
   getPayTransactionByClient,
   getPayTransaction,
