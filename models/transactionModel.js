@@ -6,14 +6,19 @@ const prisma = new PrismaClient();
 /* TRANSACTION */
 /*=============*/
 
-async function createDepositTransaction(session_id, session_fees, data) {
+async function createDepositTransaction(
+  session_id,
+  session_fees,
+  client_id,
+  discount
+) {
   try {
     const transaction = await prisma.transaction.create({
       data: {
-        value: session_fees - session_fees * data.discount,
+        value: session_fees - session_fees * discount,
         type: Type.DEPOSIT,
         session_id: session_id,
-        seller_id: data.client_id,
+        seller_id: client_id,
       },
     });
     return transaction;
@@ -68,6 +73,8 @@ async function createSaleTransaction(client_id, withdraw, session_id) {
 }
 
 async function getPayTransactionByClient(client_id, session_id) {
+  /* SUGGESTION : update to getSaleAmountByClient -> returns total_sales (number) */
+  /* SUGGESTION : create getPaidAmountByClient -> returns total_pay (number) */
   try {
     const transactions = await prisma.transaction.findMany({
       where: {
@@ -172,11 +179,7 @@ async function getTransactions(session_id) {
         session_id: session_id,
       },
     });
-    let totalTransactions = 0;
-    for (const transaction of transactions) {
-      totalTransactions += transaction.value;
-    }
-    return totalTransactions;
+    return transactions;
   } catch (error) {
     throw new Error(`Error finding Transactions: ${error.message}`);
   }

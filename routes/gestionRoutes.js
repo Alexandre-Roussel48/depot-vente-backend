@@ -17,10 +17,6 @@ function gestionRoutes() {
     '/session',
     gestionController.getSessions
   ); /* GET  /api/gestion/session        -> Returns all sessions               */
-  gestionRouter.get(
-    '/client',
-    gestionController.getClients
-  ); /* GET  /api/gestion/client(?query) -> Returns all clients matching query */
   gestionRouter.post(
     '/client',
     gestionController.createClient
@@ -53,11 +49,6 @@ function gestionRoutes() {
     '/client/withdraw/:id',
     gestionController.withdraw
   ); /* GET /api/gestion/client/withdraw/:id  ->  Returns withdrawn money by seller for current session */
-
-  gestionRouter.get(
-    '/promocode',
-    gestionController.promocode
-  ); /* GET /api/gestion/promocode  ->  Returns the amount of money that a client will pay with the discount or null if the promocode doesn't exist */
 
   gestionRouter.get(
     '/fees',

@@ -61,7 +61,6 @@ model Client {
   phone_number        String      @unique
   address             String?
   sales               Transaction[] @relation("Seller") 
-  purchases           Transaction[] @relation("Buyer")  
   realgames           Realgame[]   
 }
 
@@ -74,8 +73,6 @@ model Transaction {
   session_id          Int
   seller              Client      @relation(fields: [seller_id], references: [id], name: "Seller")
   seller_id           String
-  buyer               Client?     @relation(fields: [buyer_id], references: [id], name: "Buyer") 
-  buyer_id            String?
   realgames           Realgame?
 }
 

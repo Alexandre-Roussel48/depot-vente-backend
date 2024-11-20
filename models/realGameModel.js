@@ -17,6 +17,7 @@ async function getStockedRealGamesBySession(session_id, queryParams) {
         OR: [
           { game: { name: { startsWith: query } } },
           { game: { editor: { startsWith: query } } },
+          { id: { startsWith: query } },
         ],
         ...(range && {
           unit_price: { gte: +range.split('-')[0], lte: +range.split('-')[1] },
@@ -28,29 +29,7 @@ async function getStockedRealGamesBySession(session_id, queryParams) {
       },
     });
 
-    const groupedData = realgames.reduce((acc, item) => {
-      const { unit_price, seller_id, game_id, game, seller } = item;
-      const { name: gameName, editor: gameEditor } = game;
-      const { name: sellerName, surname: sellerSurname } = seller;
-      const key = `${unit_price}-${seller_id}-${game_id}`;
-
-      if (!acc[key]) {
-        acc[key] = {
-          unit_price,
-          gameName,
-          gameEditor,
-          sellerName,
-          sellerSurname,
-          qty: 0,
-        };
-      }
-
-      acc[key].qty += 1;
-      return acc;
-    }, {});
-
-    const result = Object.values(groupedData);
-    return result;
+    return realgames;
   } catch (error) {
     throw new Error(
       `Erreur serveur lors de la récupération du catalogue: ${error.message}`
@@ -73,18 +52,18 @@ async function getRealGamesByClient(data) {
   }
 }
 
-async function createRealGames(session_id, data) {
+async function createRealGames(session_id, client_id, deposit) {
   try {
     const realGames = [];
 
-    for (const game of data.deposit) {
+    for (const game of deposit) {
       for (let i = 0; i < game.qty; i++) {
         const realGame = await prisma.realgame.create({
           data: {
             unit_price: game.unit_price,
             status: Status.STOCK, // Status initial en STOCK
             session_id: session_id,
-            seller_id: data.client_id,
+            seller_id: client_id,
             game_id: game.game_id,
           },
         });

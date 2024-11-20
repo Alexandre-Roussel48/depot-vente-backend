@@ -6,7 +6,7 @@ const {
 const {
   createRealGames,
   saleRealGame,
-  getRealGamesByClient,
+  //getRealGamesByClient,
 } = require('../models/realGameModel');
 const {
   createDepositTransaction,
@@ -27,7 +27,6 @@ const {
   getDepositFees,
 } = require('../models/sessionModel');
 const {
-  getClients,
   createClient,
   updateClient,
   getClientById,
@@ -102,9 +101,14 @@ exports.createDeposit = async (req, res) => {
     const transactionData = await createDepositTransaction(
       session.id,
       session.fees,
-      data
+      data.client_id,
+      data.discount
     );
-    const realGameData = await createRealGames(session.id, data);
+    const realGameData = await createRealGames(
+      session.id,
+      data.client_id,
+      data.deposit
+    );
     res.status(200).json({ transactionData, realGameData });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -128,20 +132,6 @@ exports.getSessions = async (req, res) => {
 /*========*/
 /* CLIENT */
 /*========*/
-
-/* Returns existing clients
- * Params :
- * - query : string (email or phone_number)
- */
-exports.getClients = async (req, res) => {
-  try {
-    const { query } = req.query;
-    const clients = await getClients(query);
-    res.status(200).json({ clients: clients });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
 
 /* Creates a new client
  * Pre-requisites : new client email and/or phone number doesn't already exists
@@ -290,11 +280,8 @@ exports.getGames = async (req, res) => {
 
 /* Creates a new sale
  * Params :
- * - buyer_id : string
- * - seller_id : string
- * - unit_price : number
- * - sale : [] with :
- *    - realgame_id : number
+ * - [] with :
+ *    - {realgame_id : string}
  */
 
 exports.registerSale = async (req, res) => {
@@ -322,10 +309,11 @@ exports.registerSale = async (req, res) => {
 
 exports.getRealGamesByClient = async (req, res) => {
   try {
-    const { query } = req.query;
+    /*const { query } = req.query;
     const client = await getClients(query);
     const realGameByClient = await getRealGamesByClient(client);
-    res.status(200).json({ realGames: realGameByClient });
+    res.status(200).json({ realGames: realGameByClient });*/
+    res.status(200).json('TODO');
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

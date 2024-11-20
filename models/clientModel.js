@@ -8,28 +8,6 @@ const prisma = new PrismaClient();
 
 /* Returns existing clients
  * Params :
- * - data : string (email or phone_number)
- */
-async function getClients(data) {
-  try {
-    const clients = await prisma.client.findMany({
-      where: {
-        OR: [
-          { email: { startsWith: data.toLowerCase() } },
-          { phone_number: { startsWith: data.toLowerCase() } },
-        ],
-      },
-    });
-    return clients;
-  } catch (error) {
-    throw new Error(
-      `Erreur serveur lors de la récupération des clients: ${error.message}`
-    );
-  }
-}
-
-/* Returns existing clients
- * Params :
  * - id : Number
  */
 
@@ -122,7 +100,6 @@ async function deleteClient(data) {
 }
 
 module.exports = {
-  getClients,
   getClientById,
   createClient,
   updateClient,
