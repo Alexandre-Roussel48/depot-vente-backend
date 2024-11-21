@@ -3,6 +3,7 @@ const gestionController = require('../controllers/gestionController');
 
 const saleRoutes = require('./gestionsubroutes/saleRoutes');
 const depositRoutes = require('./gestionsubroutes/depositRoutes');
+const treasuryRoutes = require('./gestionsubroutes/treasuryRoutes');
 
 function gestionRoutes() {
   const gestionRouter = express.Router();
@@ -45,24 +46,9 @@ function gestionRoutes() {
   ); /* GET /api/gestion/client/withdraw/:id  ->  Returns withdrawn money by seller for current session */
 
   gestionRouter.get(
-    '/fees',
-    gestionController.deposit_fees
-  ); /* GET /api/gestion/fees  ->  Returns total fees for the current session  */
-
-  gestionRouter.get(
-    '/balance/due',
-    gestionController.dueToSellers
-  ); /* GET /api/gestion/balance/due  ->  Returns total due to sellers for the current session  */
-
-  gestionRouter.get(
     '/balance/deposit-fees',
-    gestionController.totalFees
-  ); /* GET /api/gestion/balance/deposit-fees  ->  Returns total due to sellers for the current session  */
-
-  gestionRouter.get(
-    '/commissions',
-    gestionController.commissions
-  ); /* GET /api/gestion/commissions  ->  Returns total commissions collected in the current session  */
+    gestionController.depositFees
+  ); /* GET /api/gestion/balance/deposit-fees  ->  Returns deposit_fees for the current session  */
 
   gestionRouter.get(
     '/transactions',
@@ -70,7 +56,14 @@ function gestionRoutes() {
   ); /* GET /api/gestion/transactions  ->  Returns total transactions in the current session  */
 
   gestionRouter.use('/sale', saleRoutes());
+
   gestionRouter.use('/deposit', depositRoutes());
+
+  gestionRouter.use('/fees', treasuryRoutes());
+  gestionRouter.use('/balance/due', treasuryRoutes());
+  gestionRouter.use('/commissions', treasuryRoutes());
+  gestionRouter.use('/paid', treasuryRoutes());
+  gestionRouter.use('/treasury', treasuryRoutes());
 
   return gestionRouter;
 }

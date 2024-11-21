@@ -109,6 +109,8 @@ async function createDepositTransaction(
   }
 }
 
+/* TODO*/
+/*
 async function createPayTransaction(data, session) {
   try {
     const totalValue = (await data.unit_price) * data.sale.lenght;
@@ -135,29 +137,33 @@ async function createPayTransaction(data, session) {
     throw new Error(`Error creating transaction: ${error.message}`);
   }
 }
+*/
 
 /**********
  * GETTERS *
  **********/
 
-async function getPayTransactionByClient(client_id, session_id) {
-  /* SUGGESTION : update to getSaleAmountByClient -> returns total_sales (number) */
+async function getSaleTransactionByClient(client_id, session_id) {
   /* SUGGESTION : create getPaidAmountByClient -> returns total_pay (number) */
   try {
     const transactions = await prisma.transaction.findMany({
       where: {
         session_id: session_id,
         seller_id: client_id,
-        type: Type.PAY,
+        type: Type.SALE,
       },
     });
-    return transactions;
+    let totalSales = 0;
+    for (const transaction of transactions) {
+      totalSales += transaction.value;
+    }
+    return totalSales;
   } catch (error) {
     throw new Error(`Error finding Paye transaction: ${error.message}`);
   }
 }
 
-async function getPayTransaction(session_id) {
+async function getTotalPay(session_id) {
   try {
     const transactions = await prisma.transaction.findMany({
       where: {
@@ -165,7 +171,11 @@ async function getPayTransaction(session_id) {
         type: Type.PAY,
       },
     });
-    return transactions;
+    let totalPaye = 0;
+    for (const transaction of transactions) {
+      totalPaye += transaction.value;
+    }
+    return totalPaye;
   } catch (error) {
     throw new Error(
       `Error finding Paye transaction for all clients in the current session: ${error.message}`
@@ -173,22 +183,26 @@ async function getPayTransaction(session_id) {
   }
 }
 
-async function getSaleTransactionByClient(client_id, session_id) {
+async function getPaidAmountByClient(client_id, session_id) {
   try {
     const transactions = await prisma.transaction.findMany({
       where: {
         session_id: session_id,
         seller_id: client_id,
-        type: Type.SALE,
+        type: Type.PAY,
       },
     });
-    return transactions;
+    let totalPaye = 0;
+    for (const transaction of transactions) {
+      totalPaye += transaction.value;
+    }
+    return totalPaye;
   } catch (error) {
     throw new Error(`Error finding Paye transaction: ${error.message}`);
   }
 }
 
-async function getSaleTransaction(session_id) {
+async function getTotalSales(session_id) {
   try {
     const transactions = await prisma.transaction.findMany({
       where: {
@@ -196,7 +210,11 @@ async function getSaleTransaction(session_id) {
         type: Type.SALE,
       },
     });
-    return transactions;
+    let totalSales = 0;
+    for (const transaction of transactions) {
+      totalSales += transaction.value;
+    }
+    return totalSales;
   } catch (error) {
     throw new Error(
       `Error finding Paye transaction for all clients: ${error.message}`
@@ -204,7 +222,7 @@ async function getSaleTransaction(session_id) {
   }
 }
 
-async function getFees(session_id) {
+async function getTotalDepositFees(session_id) {
   try {
     const transactions = await prisma.transaction.findMany({
       where: {
@@ -222,7 +240,7 @@ async function getFees(session_id) {
   }
 }
 
-async function getCommissions(session_id) {
+async function getTotalCommissions(session_id) {
   try {
     const transactions = await prisma.transaction.findMany({
       where: {
@@ -274,13 +292,12 @@ module.exports = {
   createDepositTransaction,
   createSaleTransactions,
   createCommissionTransactions,
-  createPayTransaction,
-  getPayTransactionByClient,
-  getPayTransaction,
+  getPaidAmountByClient,
+  getTotalPay,
   getSaleTransactionByClient,
-  getSaleTransaction,
-  getFees,
-  getCommissions,
+  getTotalSales,
+  getTotalDepositFees,
+  getTotalCommissions,
   getTransactions,
   getDue,
 };

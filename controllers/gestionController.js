@@ -5,13 +5,9 @@ const {
 } = require('../models/userModel');
 const {
   createSaleTransaction,
-  getPayTransactionByClient,
+  getPaidAmountByClient,
   getDue,
-  getPayTransaction,
-  getSaleTransaction,
-  getCommissions,
   getSaleTransactionByClient,
-  getFees,
   getTransactions,
 } = require('../models/transactionModel');
 const {
@@ -145,35 +141,12 @@ exports.dueToSeller = async (req, res) => {
 
     const session = await getSessionByDate(new Date().toISOString(), true);
 
-    const sale = await getPayTransactionByClient(client, session.id);
+    const sale = await getSaleTransactionByClient(client.id, session.id);
 
     //On cherche aussi ce qu'il a déjà retirer
-    const alreadyWithdraw = await getSaleTransactionByClient(
-      client.id,
-      session.id
-    );
+    const alreadyWithdraw = await getPaidAmountByClient(client, session.id);
 
     const due = await getDue(sale, alreadyWithdraw);
-
-    res.status(200).json({ due });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-/*   Returns withdrawn money by seller for current session
- */
-
-exports.dueToSellers = async (req, res) => {
-  try {
-    const session = await getSessionByDate(new Date().toISOString(), true);
-
-    const sales = await getPayTransaction(session.id);
-
-    //On cherche aussi ce qu'ils ont déjà retirer
-    const alreadyWithdraw = await getSaleTransaction(session.id);
-
-    const due = await getDue(sales, alreadyWithdraw);
 
     res.status(200).json({ due });
   } catch (error) {
@@ -194,18 +167,19 @@ exports.withdraw = async (req, res) => {
 
     const session = await getSessionByDate(new Date().toISOString(), true);
 
-    const sale = await getPayTransactionByClient(client, session.id);
+    const sale = await getSaleTransactionByClient(client.id, session.id);
 
     //On cherche aussi ce qu'il a déjà retirer
-    const alreadyWithdraw = await getSaleTransactionByClient(
-      client.id,
-      session.id
-    );
+    const alreadyWithdraw = await getPaidAmountByClient(client, session.id);
 
     const due = await getDue(sale, alreadyWithdraw);
 
     //Dans cette fonction, on ne créé pas de transaction si due=0
-    const withdraw = await createSaleTransaction(client, due, session.id);
+    const withdraw = await createSaleTransaction(
+      client,
+      due,
+      session.id
+    ); /* warning il faut creer un paye!!!*/
 
     res.status(200).json({ withdraw });
   } catch (error) {
@@ -256,50 +230,16 @@ exports.getRealGamesByClient = async (req, res) => {
 /* FEES */
 /*======*/
 
-/* Returns total fees collected for the current session
- */
-
-exports.totalFees = async (req, res) => {
-  try {
-    const session = await getSessionByDate(new Date().toISOString(), true);
-
-    const totalFees = await getFees(session.id);
-
-    res.status(200).json({ totalFees });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
 /* Returns deposit_fees for the current session
  */
 
-exports.deposit_fees = async (req, res) => {
+exports.depositFees = async (req, res) => {
   try {
     const session = await getSessionByDate(new Date().toISOString(), true);
 
     const deposit_fees = await getDepositFees(session.id);
 
     res.status(200).json({ deposit_fees });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-/*============*/
-/* COMMISSION */
-/*============*/
-
-/* Returns total commissions collected in the current session
- */
-
-exports.commissions = async (req, res) => {
-  try {
-    const session = await getSessionByDate(new Date().toISOString(), true);
-
-    const totalCommission = await getCommissions(session.id);
-
-    res.status(200).json({ totalCommission });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
