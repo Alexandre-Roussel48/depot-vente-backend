@@ -109,35 +109,21 @@ async function createDepositTransaction(
   }
 }
 
-/* TODO*/
-/*
-async function createPayTransaction(data, session) {
+async function createPayTransaction(seller_id, due, session_id) {
   try {
-    const totalValue = (await data.unit_price) * data.sale.lenght;
-    const sale = await prisma.transaction.create({
+    const paiement = await prisma.transaction.create({
       data: {
-        value: totalValue,
+        value: due,
         type: Type.PAY,
-        session_id: session.id,
-        seller_id: data.seller_id,
-        buyer_id: data.buyer_id,
+        session_id: session_id,
+        seller_id: seller_id,
       },
     });
-    const commission = totalValue * session.commission;
-    await prisma.transaction.create({
-      data: {
-        value: commission,
-        type: Type.COMMISSION,
-        session_id: session.id,
-        seller_id: data.seller_id,
-      },
-    });
-    return sale;
+    return paiement;
   } catch (error) {
     throw new Error(`Error creating transaction: ${error.message}`);
   }
 }
-*/
 
 /**********
  * GETTERS *
@@ -291,6 +277,7 @@ async function getDue(sales, alreadyWithdraw) {
 module.exports = {
   createDepositTransaction,
   createSaleTransactions,
+  createPayTransaction,
   createCommissionTransactions,
   getPaidAmountByClient,
   getTotalPay,

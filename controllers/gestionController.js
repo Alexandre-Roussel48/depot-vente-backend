@@ -4,11 +4,11 @@ const {
   createJwt,
 } = require('../models/userModel');
 const {
-  createSaleTransaction,
   getPaidAmountByClient,
   getDue,
   getSaleTransactionByClient,
   getTransactions,
+  createPayTransaction,
 } = require('../models/transactionModel');
 const {
   getSessions,
@@ -175,11 +175,7 @@ exports.withdraw = async (req, res) => {
     const due = await getDue(sale, alreadyWithdraw);
 
     //Dans cette fonction, on ne créé pas de transaction si due=0
-    const withdraw = await createSaleTransaction(
-      client,
-      due,
-      session.id
-    ); /* warning il faut creer un paye!!!*/
+    const withdraw = await createPayTransaction(client.id, due, session.id);
 
     res.status(200).json({ withdraw });
   } catch (error) {
