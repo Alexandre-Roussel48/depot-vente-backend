@@ -129,8 +129,7 @@ async function createPayTransaction(seller_id, due, session_id) {
  * GETTERS *
  **********/
 
-async function getSaleTransactionByClient(client_id, session_id) {
-  /* SUGGESTION : create getPaidAmountByClient -> returns total_pay (number) */
+async function getSoldRealGamesByClient(client_id, session_id) {
   try {
     const transactions = await prisma.transaction.findMany({
       where: {
@@ -257,23 +256,6 @@ async function getTransactions(session_id) {
   }
 }
 
-async function getDue(sales, alreadyWithdraw) {
-  try {
-    let due = 0;
-    for (const sale of sales) {
-      due += sale.value;
-    }
-
-    for (const withdraw of alreadyWithdraw) {
-      due -= withdraw.value;
-    }
-
-    return due;
-  } catch (error) {
-    throw new Error(`Error finding due: ${error.message}`);
-  }
-}
-
 module.exports = {
   createDepositTransaction,
   createSaleTransactions,
@@ -281,10 +263,9 @@ module.exports = {
   createCommissionTransactions,
   getPaidAmountByClient,
   getTotalPay,
-  getSaleTransactionByClient,
+  getSoldRealGamesByClient,
   getTotalSales,
   getTotalDepositFees,
   getTotalCommissions,
   getTransactions,
-  getDue,
 };

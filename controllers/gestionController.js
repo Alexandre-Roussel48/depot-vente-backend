@@ -9,6 +9,7 @@ const {
   getSaleTransactionByClient,
   getTransactions,
   createPayTransaction,
+  getSoldRealGamesByClient,
 } = require('../models/transactionModel');
 const {
   getSessions,
@@ -19,8 +20,10 @@ const {
   createClient,
   updateClient,
   getClientById,
+  getClientByEmail,
 } = require('../models/clientModel');
 const { getGames } = require('../models/gameModel');
+const { getStockedRealGamesByClient } = require('../models/realGameModel');
 
 /*=======*/
 /* LOGIN */
@@ -125,6 +128,38 @@ exports.updateClient = async (req, res) => {
   }
 };
 
+/* Returns client infos matching id
+ * Params :
+ * - email : string (unique)
+ * - session : Session Object
+ */
+exports.getClientInfos = async (req, res) => {
+  try {
+    const data = req.body;
+
+    const session = data.session;
+
+    const client = getClientByEmail(data.email);
+
+    const clientPaidAmount = getPaidAmountByClient(session.id, client.id);
+
+    const clientSoldRG = getSoldRealGamesByClient(session.id, client.id);
+
+    const clientDue = clientSoldRG - clientPaidAmount;
+
+    const clientStockedRG = getStockedRealGamesByClient(session.id, client.id);
+
+    res.status(200).json({
+      due: clientDue,
+      paidAmount: clientPaidAmount,
+      soldRG: clientSoldRG,
+      stockedRG: clientStockedRG,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 /*=====*/
 /* DUE */
 /*=====*/
@@ -141,7 +176,7 @@ exports.dueToSeller = async (req, res) => {
 
     const session = await getSessionByDate(new Date().toISOString(), true);
 
-    const sale = await getSaleTransactionByClient(client.id, session.id);
+    const sale = await getSoldRealGamesByClient(client.id, session.id);
 
     //On cherche aussi ce qu'il a déjà retirer
     const alreadyWithdraw = await getPaidAmountByClient(client, session.id);

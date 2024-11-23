@@ -25,6 +25,12 @@ function gestionRoutes() {
     '/client',
     gestionController.updateClient
   ); /* PUT  /api/gestion/client         -> Updates an existing client         */
+
+  gestionRouter.get(
+    '/client/:id',
+    gestionController.getClientInfos
+  ); /* GET /api/gestion/client          -> Returns client infos matching id */
+
   gestionRouter.get(
     '/game',
     gestionController.getGames
