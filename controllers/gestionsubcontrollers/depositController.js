@@ -12,9 +12,9 @@ exports.getClientByEmail = async (req, res) => {
     const { email } = req.query;
     const client = await getClientByEmail(email);
 
-    res.status(200).json({ client_id: client.id });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(200).json({ id: client.id });
+  } catch {
+    res.status(500).json({ message: "Ce client n'existe pas" });
   }
 };
 
@@ -23,7 +23,7 @@ exports.registerClient = async (req, res) => {
     const data = req.body;
     const client = await createClient(data);
 
-    res.status(200).json({ client_id: client.id });
+    res.status(200).json({ id: client.id });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
