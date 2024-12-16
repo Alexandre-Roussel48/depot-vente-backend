@@ -20,10 +20,13 @@ const {
   createClient,
   updateClient,
   getClientById,
-  getClientByEmail,
+  getClientsByStartEmail,
 } = require('../models/clientModel');
 const { getGames } = require('../models/gameModel');
-const { getStockedRealGamesByClient } = require('../models/realGameModel');
+const {
+  getStockedRealGamesByClient,
+  getSoldRGByClient,
+} = require('../models/realGameModel');
 
 /*=======*/
 /* LOGIN */
@@ -79,7 +82,7 @@ exports.login = async (req, res) => {
 exports.getSessions = async (req, res) => {
   try {
     const sessions = await getSessions();
-    res.status(200).json({ sessions: sessions });
+    res.status(200).json(sessions);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -130,7 +133,7 @@ exports.updateClient = async (req, res) => {
 
 /* Returns client infos matching id
  * Params :
- * - email : string (unique)
+ * - id : string (unique)
  * - session : Session Object
  */
 exports.getClientInfos = async (req, res) => {
@@ -138,23 +141,39 @@ exports.getClientInfos = async (req, res) => {
     const data = req.body;
 
     const session = data.session;
+    const client = await getClientById(data.id);
 
-    const client = getClientByEmail(data.email);
+    const clientPaidAmount = await getPaidAmountByClient(session.id, client.id);
 
-    const clientPaidAmount = getPaidAmountByClient(session.id, client.id);
-
-    const clientSoldRG = getSoldRealGamesByClient(session.id, client.id);
+    const clientSoldRG = await getSoldRGByClient(session.id, client.id);
 
     const clientDue = clientSoldRG - clientPaidAmount;
 
-    const clientStockedRG = getStockedRealGamesByClient(session.id, client.id);
-
+    const clientStockedRG = await getStockedRealGamesByClient(
+      session.id,
+      client.id
+    );
     res.status(200).json({
       due: clientDue,
       paidAmount: clientPaidAmount,
       soldRG: clientSoldRG,
       stockedRG: clientStockedRG,
     });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+/* Returns client-list with the start of an email
+ * Params :
+ * - email : string (unique)
+ */
+exports.getClientsByStartEmail = async (req, res) => {
+  try {
+    const email = req.body.email;
+
+    const clients = await getClientsByStartEmail(email);
+    res.status(200).json(clients);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

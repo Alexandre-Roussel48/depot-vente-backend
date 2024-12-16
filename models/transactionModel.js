@@ -129,7 +129,7 @@ async function createPayTransaction(seller_id, due, session_id) {
  * GETTERS *
  **********/
 
-async function getSoldRealGamesByClient(client_id, session_id) {
+async function getSoldRealGamesByClient(session_id, client_id) {
   try {
     const transactions = await prisma.transaction.findMany({
       where: {
@@ -168,7 +168,7 @@ async function getTotalPay(session_id) {
   }
 }
 
-async function getPaidAmountByClient(client_id, session_id) {
+async function getPaidAmountByClient(session_id, client_id) {
   try {
     const transactions = await prisma.transaction.findMany({
       where: {

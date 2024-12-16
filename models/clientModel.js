@@ -128,7 +128,30 @@ async function getClientByEmail(email) {
     return client;
   } catch (error) {
     throw new Error(
-      `Erreur serveur lors de la récupération du client avec son id: ${error.message}`
+      `Erreur serveur lors de la récupération du client avec son mail: ${error.message}`
+    );
+  }
+}
+
+async function getClientsByStartEmail(emailPrefix) {
+  try {
+    if (emailPrefix && typeof emailPrefix !== 'string') {
+      throw new Error('emailPrefix doit être une chaîne de caractères');
+    }
+
+    const clients = await prisma.client.findMany({
+      where: emailPrefix
+        ? {
+            email: {
+              startsWith: emailPrefix.toLowerCase(),
+            },
+          }
+        : {}, // Si emailPrefix est vide, aucun filtre n'est appliqué
+    });
+    return clients;
+  } catch (error) {
+    throw new Error(
+      `Erreur serveur lors de la récupération des clients avec le début du mail: ${error.message}`
     );
   }
 }
@@ -139,4 +162,5 @@ module.exports = {
   deleteClient,
   getClientById,
   getClientByEmail,
+  getClientsByStartEmail,
 };

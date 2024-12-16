@@ -124,6 +124,23 @@ async function getStockedRealGamesBySession(session_id, queryParams) {
   }
 }
 
+async function getSoldRGByClient(session_id, client_id) {
+  try {
+    const realgames = await prisma.realgame.findMany({
+      where: {
+        session_id: session_id,
+        status: Status.SOLD,
+        seller_id: client_id,
+      },
+    });
+    return realgames;
+  } catch (error) {
+    throw new Error(
+      `Erreur serveur lors de la récupération des jeux réels vendu d'un client: ${error.message}`
+    );
+  }
+}
+
 async function getStockedRealGamesByClient(session_id, client_id) {
   try {
     const realgames = await prisma.realgame.findMany({
@@ -161,5 +178,6 @@ module.exports = {
   sellRealGames,
   getStockedRealGamesBySession,
   getStockedRealGamesByClient,
+  getSoldRGByClient,
   getRealGamesByClient,
 };
