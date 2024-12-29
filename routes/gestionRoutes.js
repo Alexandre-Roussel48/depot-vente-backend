@@ -26,10 +26,15 @@ function gestionRoutes() {
     gestionController.updateClient
   ); /* PUT  /api/gestion/client         -> Updates an existing client         */
 
-  gestionRouter.get(
-    '/client/:id',
+  gestionRouter.post(
+    '/client-info',
     gestionController.getClientInfos
-  ); /* GET /api/gestion/client          -> Returns client infos matching id */
+  ); /* POST /api/gestion/client-info          -> Returns client infos matching id and session*/
+
+  gestionRouter.post(
+    '/client-list',
+    gestionController.getClientsByStartEmail
+  ); /* GET /api/gestion/client-list          -> Returns client-list with the start of an email */
 
   gestionRouter.get(
     '/game',
