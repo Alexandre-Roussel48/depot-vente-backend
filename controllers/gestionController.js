@@ -11,11 +11,7 @@ const {
   createPayTransaction,
   getSoldRealGamesByClient,
 } = require('../models/transactionModel');
-const {
-  getSessions,
-  getSessionByDate,
-  getDepositFees,
-} = require('../models/sessionModel');
+const { getSessions, getSessionByDate } = require('../models/sessionModel');
 const {
   createClient,
   updateClient,
@@ -230,7 +226,7 @@ exports.getGames = async (req, res) => {
   try {
     const { query } = req.query;
     const games = await getGames(query);
-    res.status(200).json({ games: games });
+    res.status(200).json(games);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -252,25 +248,6 @@ exports.getRealGamesByClient = async (req, res) => {
     const realGameByClient = await getRealGamesByClient(client);
     res.status(200).json({ realGames: realGameByClient });*/
     res.status(200).json('TODO');
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-/*======*/
-/* FEES */
-/*======*/
-
-/* Returns deposit_fees for the current session
- */
-
-exports.depositFees = async (req, res) => {
-  try {
-    const session = await getSessionByDate(new Date().toISOString(), true);
-
-    const deposit_fees = await getDepositFees(session.id);
-
-    res.status(200).json({ deposit_fees });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
