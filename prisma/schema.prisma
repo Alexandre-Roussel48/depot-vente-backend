@@ -73,8 +73,8 @@ model Transaction {
   session_id          Int
   seller              Client      @relation(fields: [seller_id], references: [id], name: "Seller")
   seller_id           String
-  realgame            Realgame    @relation(fields: [realgame_id], references: [id])
-  realgame_id         String
+  realgame            Realgame?   @relation(fields: [realgame_id], references: [id])
+  realgame_id         String?
 }
 
 model Realgame {
