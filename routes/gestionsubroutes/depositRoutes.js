@@ -19,6 +19,11 @@ function depositRoutes() {
     depositController.registerDeposit
   ); /* POST /api/gestion/deposit/register           ->  Returns transaction and deposit data */
 
+  depositRouter.get(
+    '/fees',
+    depositController.depositFees
+  ); /* GET /api/gestion/deposit/fees  ->  Returns deposit_fees for the current session  */
+
   return depositRouter;
 }
 

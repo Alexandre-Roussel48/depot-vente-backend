@@ -57,11 +57,6 @@ function gestionRoutes() {
   ); /* GET /api/gestion/client/withdraw/:id  ->  Returns withdrawn money by seller for current session */
 
   gestionRouter.get(
-    '/balance/deposit-fees',
-    gestionController.depositFees
-  ); /* GET /api/gestion/balance/deposit-fees  ->  Returns deposit_fees for the current session  */
-
-  gestionRouter.get(
     '/transactions',
     gestionController.transactions
   ); /* GET /api/gestion/transactions  ->  Returns total transactions in the current session  */
