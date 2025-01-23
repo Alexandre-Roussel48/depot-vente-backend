@@ -132,6 +132,9 @@ async function getSoldRGByClient(session_id, client_id) {
         status: Status.SOLD,
         seller_id: client_id,
       },
+      include: {
+        game: true,
+      },
     });
     return realgames;
   } catch (error) {
@@ -148,6 +151,9 @@ async function getStockedRealGamesByClient(session_id, client_id) {
         session_id: session_id,
         status: Status.STOCK,
         seller_id: client_id,
+      },
+      include: {
+        game: true,
       },
     });
     return realgames;

@@ -145,19 +145,64 @@ exports.getClientInfos = async (req, res) => {
 
     const clientPaidAmount = await getPaidAmountByClient(session.id, client.id);
 
+    const clientSoldAmount = await getSoldRealGamesByClient(
+      session.id,
+      client.id
+    );
+
     const clientSoldRG = await getSoldRGByClient(session.id, client.id);
 
-    const clientDue = clientSoldRG - clientPaidAmount;
+    const clientDue = clientSoldAmount - clientPaidAmount;
+
+    const groupedDataSold = clientSoldRG.reduce((acc, item) => {
+      const { unit_price, game_id, game } = item;
+      const { name: gameName, editor: gameEditor } = game;
+      const key = `${unit_price}-${game_id}`;
+
+      if (!acc[key]) {
+        acc[key] = {
+          unit_price,
+          gameName,
+          gameEditor,
+          qty: 0,
+        };
+      }
+
+      acc[key].qty += 1;
+      return acc;
+    }, {});
+    const resultSold = Object.values(groupedDataSold);
 
     const clientStockedRG = await getStockedRealGamesByClient(
       session.id,
       client.id
     );
+
+    const groupedDataStocked = clientStockedRG.reduce((acc, item) => {
+      const { unit_price, game_id, game } = item;
+      const { name: gameName, editor: gameEditor } = game;
+      const key = `${unit_price}-${game_id}`;
+
+      if (!acc[key]) {
+        acc[key] = {
+          unit_price,
+          gameName,
+          gameEditor,
+          qty: 0,
+        };
+      }
+
+      acc[key].qty += 1;
+      return acc;
+    }, {});
+
+    const resultStocked = Object.values(groupedDataStocked);
+
     res.status(200).json({
       due: clientDue,
       paidAmount: clientPaidAmount,
-      soldRG: clientSoldRG,
-      stockedRG: clientStockedRG,
+      soldRG: resultSold,
+      stockedRG: resultStocked,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
