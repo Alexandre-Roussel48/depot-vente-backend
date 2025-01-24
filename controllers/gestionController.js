@@ -330,7 +330,7 @@ exports.transactions = async (req, res) => {
 
     const totalTransactions = await getTransactions(session.id);
 
-    res.status(200).json({ totalTransactions });
+    res.status(200).json(totalTransactions);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

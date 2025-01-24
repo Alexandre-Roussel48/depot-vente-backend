@@ -249,6 +249,9 @@ async function getTransactions(session_id) {
       where: {
         session_id: session_id,
       },
+      include: {
+        seller: true, // Inclure les informations du vendeur
+      },
     });
     return transactions;
   } catch (error) {
