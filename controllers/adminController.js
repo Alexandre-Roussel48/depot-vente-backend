@@ -73,8 +73,8 @@ exports.deleteSession = async (req, res) => {
  */
 exports.deleteClient = async (req, res) => {
   try {
-    const data = req.body;
-    await deleteClient(data);
+    const { id } = req.params;
+    await deleteClient(id);
 
     res.status(200).json({ message: 'Client supprimé' });
   } catch (error) {

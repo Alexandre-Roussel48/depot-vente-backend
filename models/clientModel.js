@@ -81,8 +81,14 @@ async function updateClient(data) {
  */
 async function deleteClient(data) {
   try {
+    await prisma.transaction.deleteMany({
+      where: { seller_id: data },
+    });
+    await prisma.realgame.deleteMany({
+      where: { seller_id: data },
+    });
     await prisma.client.delete({
-      where: { id: data.id },
+      where: { id: data },
     });
   } catch (error) {
     throw new Error(

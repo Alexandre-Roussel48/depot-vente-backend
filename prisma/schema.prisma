@@ -85,7 +85,7 @@ model Realgame {
   session_id          Int
   seller              Client      @relation(fields: [seller_id], references: [id])
   seller_id           String
-  game                Game        @relation(fields: [game_id], references: [id])
+  game                Game        @relation(fields: [game_id], references: [id], onDelete: Cascade)
   game_id             Int
   transactions        Transaction[]
 }

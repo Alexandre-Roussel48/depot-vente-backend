@@ -16,9 +16,9 @@ function adminRoutes() {
     adminController.deleteSession
   ); /* DELETE /api/admin/session  -> Deletes existing session */
   adminRouter.delete(
-    '/client',
+    '/client/:id',
     adminController.deleteClient
-  ); /* DELETE /api/admin/client   -> Deletes existing client  */
+  ); /* DELETE /api/admin/client/:id -> Deletes existing client by ID */
   adminRouter.post(
     '/game',
     adminController.createGame
