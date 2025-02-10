@@ -8,6 +8,8 @@ RUN npm install
 
 COPY . .
 
+RUN ln -s /usr/lib/libssl.so.3 /lib/libssl.so.3
+
 RUN npx prisma generate
 
 EXPOSE 5000

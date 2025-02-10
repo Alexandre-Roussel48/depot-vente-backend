@@ -19,14 +19,14 @@ enum Status {
   WITHDRAWN
 }
 
-enum Types {
+enum Type {
   DEPOSIT
   COMMISSION
   SALE
   PAY
 }
 
-models User {
+model User {
   id                  String      @id @default(uuid())
   name                String
   surname             String
@@ -38,16 +38,19 @@ models User {
 
 model Session {
   id                  Int         @id @default(autoincrement())
-  begin_date          DateTime    @default(now())
+  begin_date          DateTime
   end_date            DateTime
-  commission          Int
+  commission          Decimal
   fees                Int
+  transactions        Transaction[] 
+  realgames           Realgame[]    
 }
 
 model Game {
   id                  Int         @id @default(autoincrement())
   name                String
   editor              String
+  realgames           Realgame[]   
 }
 
 model Client {
@@ -57,26 +60,26 @@ model Client {
   email               String      @unique
   phone_number        String      @unique
   address             String?
-
-  @@index([email])
+  sales               Transaction[] @relation("Seller") 
+  realgames           Realgame[]   
 }
 
-models Transaction {
+model Transaction {
   id                  Int         @id @default(autoincrement())
   date                DateTime    @default(now())
-  value               Int
-  Types               Types
+  value               Decimal
+  type                Type
   session             Session     @relation(fields: [session_id], references: [id])
   session_id          Int
-  seller              Client      @relation(fields: [seller_id], references: [id])
+  seller              Client      @relation(fields: [seller_id], references: [id], name: "Seller")
   seller_id           String
-  buyer               Client      @relation(fields: [buyer_id], references: [id])
-  buyer_id            String?
+  realgame            Realgame?   @relation(fields: [realgame_id], references: [id])
+  realgame_id         String?
 }
 
 model Realgame {
   id                  String      @id @default(uuid())
-  unit_price          Int
+  unit_price          Decimal
   status              Status
   session             Session     @relation(fields: [session_id], references: [id])
   session_id          Int
@@ -84,6 +87,5 @@ model Realgame {
   seller_id           String
   game                Game        @relation(fields: [game_id], references: [id])
   game_id             Int
-  sale                Transaction @relation(fields: [transaction_id], references: [id])
-  sale_id             Int?
+  transactions        Transaction[]
 }
