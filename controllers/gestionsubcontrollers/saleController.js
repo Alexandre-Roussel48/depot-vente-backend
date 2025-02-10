@@ -21,7 +21,14 @@ exports.getRealGamesForSale = async (req, res) => {
     const query = req.query;
     const realgames = await getStockedRealGamesBySession(session_id, query);
 
-    res.status(200).json(realgames);
+    const transformedArray = realgames.map((item) => ({
+      id: item.id,
+      unit_price: item.unit_price,
+      gameName: item.game.name,
+      gameEditor: item.game.editor,
+    }));
+
+    res.status(200).json(transformedArray);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
