@@ -140,7 +140,7 @@ async function getSoldRealGamesByClient(session_id, client_id) {
     });
     let totalSales = 0;
     for (const transaction of transactions) {
-      totalSales += transaction.value;
+      totalSales += Number(transaction.value);
     }
     return totalSales;
   } catch (error) {
@@ -158,7 +158,7 @@ async function getTotalPay(session_id) {
     });
     let totalPaye = 0;
     for (const transaction of transactions) {
-      totalPaye += transaction.value;
+      totalPaye += Number(transaction.value);
     }
     return totalPaye;
   } catch (error) {
@@ -179,7 +179,7 @@ async function getPaidAmountByClient(session_id, client_id) {
     });
     let totalPaye = 0;
     for (const transaction of transactions) {
-      totalPaye += transaction.value;
+      totalPaye += Number(transaction.value);
     }
     return totalPaye;
   } catch (error) {
@@ -197,7 +197,7 @@ async function getTotalSales(session_id) {
     });
     let totalSales = 0;
     for (const transaction of transactions) {
-      totalSales += transaction.value;
+      totalSales += Number(transaction.value);
     }
     return totalSales;
   } catch (error) {
@@ -217,7 +217,7 @@ async function getTotalDepositFees(session_id) {
     });
     let totalFees = 0;
     for (const transaction of transactions) {
-      totalFees += transaction.value;
+      totalFees += Number(transaction.value);
     }
     return totalFees;
   } catch (error) {
@@ -235,7 +235,7 @@ async function getTotalCommissions(session_id) {
     });
     let totalCommission = 0;
     for (const transaction of transactions) {
-      totalCommission += transaction.value;
+      totalCommission += Number(transaction.value);
     }
     return totalCommission;
   } catch (error) {

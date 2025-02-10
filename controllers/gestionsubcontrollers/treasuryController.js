@@ -3,7 +3,6 @@ const {
   getTotalDepositFees,
   getTotalSales,
   getTotalCommissions,
-  getDue,
 } = require('../../models/transactionModel');
 
 /*=========*/
@@ -41,9 +40,7 @@ exports.getDue = async (req, res) => {
     //On cherche aussi ce qu'ils ont déjà retirer
     const alreadyWithdraw = await getTotalPay(session.id);
 
-    const due = await getDue(sales, alreadyWithdraw);
-
-    res.status(200).json({ due });
+    res.status(200).json({ due: sales - alreadyWithdraw });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
